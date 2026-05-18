@@ -680,6 +680,13 @@ textarea { resize: none; min-height: 72px; }
 <!-- ===== PEDIDOS ===== -->
 <div id="view-pedidos" class="view">
 
+  <div class="subtabs">
+    <button class="subtab active" onclick="irSubtab('ped-novo',this)">Novo Pedido</button>
+    <button class="subtab" onclick="irSubtab('ped-gerenciar',this)">Gerenciar</button>
+  </div>
+
+  <div class="subtab-view active" id="subtab-ped-novo">
+
   <!-- Novo pedido: menu -->
   <div class="section">
     <div class="section-head"><span class="section-title">Novo pedido — selecione os itens</span></div>
@@ -751,16 +758,21 @@ textarea { resize: none; min-height: 72px; }
     </div>
   </div>
 
-  <hr class="divider">
+  </div><!-- /subtab-ped-novo -->
 
-  <!-- Lista de pedidos do dia -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-title">Pedidos de hoje</span>
-      <span id="ped-total-badge" class="k-count-badge">0</span>
+  <div class="subtab-view" id="subtab-ped-gerenciar">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Todos os pedidos</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="ped-total-badge" class="k-count-badge">0</span>
+          <button class="btn btn-ghost btn-sm" onclick="limparTodosPedidos()" style="color:var(--red);border-color:rgba(229,57,53,0.3)">Limpar tudo</button>
+        </div>
+      </div>
+      <div class="section-body" id="pedidos-lista"><div class="empty">Nenhum pedido ainda.</div></div>
     </div>
-    <div class="section-body" id="pedidos-lista"><div class="empty">Nenhum pedido ainda.</div></div>
-  </div>
+  </div><!-- /subtab-ped-gerenciar -->
+
 </div>
 
 <!-- ===== COZINHA ===== -->
@@ -1229,6 +1241,16 @@ function deletarPedido(num) {
   renderPedidos();
   renderDashboard();
 }
+function limparTodosPedidos() {
+  if (!estado.pedidos.length) return;
+  if (!confirm('Remover todos os '+estado.pedidos.length+' pedidos?')) return;
+  estado.pedidos = [];
+  estado.pedidoNum = 1;
+  salvar();
+  renderPedidos();
+  renderDashboard();
+  toast('Todos os pedidos removidos.', 'warn');
+}
 
 function nomesItens(ped) {
   return ped.itens.map(function(i){ return (i.qtd>1?i.qtd+'× ':'')+i.nome; }).join(', ');
@@ -1252,6 +1274,7 @@ function renderPedidos() {
         '<span class="badge '+STATUS_CLASS[p.status]+'">'+STATUS_LABEL[p.status]+'</span>' +
         '<div class="ped-valor">'+fmt(p.valor)+'</div>' +
       '</div>' +
+      '<button class="icon-btn" onclick="event.stopPropagation();deletarPedido('+p.num+')" title="Remover" style="color:var(--muted);font-size:20px;padding:4px 6px">×</button>' +
       '</div>';
   }).join('');
 }
