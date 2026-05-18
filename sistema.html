@@ -1028,7 +1028,7 @@ var estado = {
   estoque:   [],
   custos:    [],
   artes:     [],
-  whatsapp:  '',
+  whatsapp:  '3384413525',
   pedidoNum: 1
 };
 var carrinho = []; // { id, nome, preco, qtd, avulso }
@@ -1068,7 +1068,7 @@ function carregar() {
       estado.estoque   = d.estoque   || [];
       estado.custos    = d.custos    || [];
       estado.artes     = d.artes     || [];
-      estado.whatsapp  = d.whatsapp  || '';
+      estado.whatsapp  = d.whatsapp  || estado.whatsapp;
       estado.pedidoNum = d.pedidoNum || 1;
       var temAntigo = estado.cardapio.some(function(i){ return i.categoria === 'Lanches' || i.categoria === 'Acompanhamentos' || i.categoria === 'Sobremesas'; });
       if (!estado.cardapio.length || temAntigo) { estado.cardapio = DEFAULTS_CARDAPIO; salvar(); }
