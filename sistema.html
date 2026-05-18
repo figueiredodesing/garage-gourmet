@@ -1128,7 +1128,7 @@ function renderPedidos() {
   var PAG_TAG = {dinheiro:'<span class="pay-tag pay-din">Dinheiro</span>',cartao:'<span class="pay-tag pay-cart">Cartão</span>',pix:'<span class="pay-tag pay-pix">Pix</span>',pendente:'<span class="pay-tag" style="background:rgba(85,85,85,0.15);color:var(--muted)">A pagar</span>'};
   lista.innerHTML = estado.pedidos.map(function(p) {
     var clienteBadge = p.origem==='cliente' ? '<span class="pay-tag" style="background:rgba(245,166,35,0.2);color:var(--gold);border:1px solid rgba(245,166,35,0.35);margin-left:4px">📱 Cliente</span>' : '';
-    return '<div class="pedido-item" onclick="avancarStatus('+p.num+')" style="'+(p.origem==='cliente'&&p.status==='novo'?'border-left:3px solid var(--gold);padding-left:8px':''):'">' +
+    return '<div class="pedido-item" onclick="avancarStatus('+p.num+')" style="'+(p.origem==='cliente'&&p.status==='novo'?'border-left:3px solid var(--gold);padding-left:8px':'')+'">' +
       '<span class="ped-num">#'+String(p.num).padStart(3,'0')+'</span>' +
       '<div class="ped-info">' +
         '<div class="ped-desc">'+esc(nomesItens(p))+'</div>' +
