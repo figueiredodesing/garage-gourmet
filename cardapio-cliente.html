@@ -519,6 +519,21 @@ function enviarPedido() {
     return;
   }
 
+  // Notificação WhatsApp
+  var wpp = (d.whatsapp || '').replace(/\D/g,'');
+  if (wpp) {
+    var linhas = ['🍔 *NOVO PEDIDO #' + String(num).padStart(3,'0') + '*'];
+    linhas.push('👤 ' + nome);
+    linhas.push('');
+    carrinho.forEach(function(i){
+      linhas.push('• ' + i.qtd + 'x ' + i.nome + ' — ' + fmt(i.preco * i.qtd));
+    });
+    linhas.push('');
+    linhas.push('*Total: ' + fmt(totalCarrinho()) + '*');
+    if (obs) linhas.push('📝 ' + obs);
+    window.open('https://wa.me/55' + wpp + '?text=' + encodeURIComponent(linhas.join('\n')), '_blank');
+  }
+
   // Tela de sucesso
   document.getElementById('overlay').classList.remove('open');
   document.body.style.overflow = '';
