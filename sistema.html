@@ -1025,7 +1025,27 @@ var catCardapioAtiva = 'Todos';
 var catPedidosAtiva  = 'Todos';
 var catCardapioPillLast = 'Todos';
 
-var DEFAULTS_CARDAPIO = [];
+var DEFAULTS_CARDAPIO = [
+  {id:uid(),nome:'Clássico',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar e molho especial da casa.',preco:20,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Salada Burguer',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar, alface, tomate, picles e molho especial da casa.',preco:23,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Bacon Burguer',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar, bacon crocante, cheddar, cebola caramelizada e molho especial da casa.',preco:27,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Especial Garage',descricao:'Pão brioche, blend bovino 150g, queijo prato, bacon crocante, banana da terra, cebola caramelizada, creme de cheddar e molho especial da casa.',preco:32,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Garage Duplo',descricao:'Pão brioche, duplo blend bovino 150g, duplo queijo cheddar, duplo bacon crocante e molho especial da casa.',preco:35,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Garage Sertanejo',descricao:'Pão brioche, blend bovino 150g, queijo prato, banana da terra, carne seca desfiada, catupiry e molho especial da casa.',preco:33,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Coca-Cola ou Guaraná 2L',descricao:'',preco:15,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola Zero 2L',descricao:'',preco:16,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola ou Guaraná 1L',descricao:'',preco:10,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola ou Guaraná Lata',descricao:'',preco:6,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola Lata Zero',descricao:'',preco:7,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Blend Bovino 150g',descricao:'',preco:10,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Bacon Crocante',descricao:'',preco:4,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Picles',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Ovo',descricao:'',preco:2,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Cebola Caramelizada',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Banana da Terra',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Queijo',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Creme de Cheddar',descricao:'',preco:3,categoria:'Adicionais',disponivel:true}
+];
 
 function carregar() {
   try {
@@ -1038,9 +1058,11 @@ function carregar() {
       estado.custos    = d.custos    || [];
       estado.artes     = d.artes     || [];
       estado.pedidoNum = d.pedidoNum || 1;
-      // limpa cardápio antigo (categorias antigas)
       var temAntigo = estado.cardapio.some(function(i){ return i.categoria === 'Lanches' || i.categoria === 'Acompanhamentos' || i.categoria === 'Sobremesas'; });
-      if (temAntigo) { estado.cardapio = []; salvar(); }
+      if (temAntigo) { estado.cardapio = DEFAULTS_CARDAPIO; salvar(); }
+    } else {
+      estado.cardapio = DEFAULTS_CARDAPIO;
+      salvar();
     }
   } catch(e) {}
 }
