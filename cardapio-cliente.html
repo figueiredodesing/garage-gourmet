@@ -271,8 +271,16 @@ textarea { resize: none; min-height: 72px; }
 </head>
 <body>
 
+<svg style="position:absolute;width:0;height:0" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="rmwhite" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -3 -3 -3 1 7.5"/>
+    </filter>
+  </defs>
+</svg>
+
 <div class="header">
-  <img src="Garage_Gourmet_centered.png" alt="Garage Gourmet">
+  <img src="Garage_Gourmet_centered.png" alt="Garage Gourmet" style="filter:url('#rmwhite')">
   <div class="header-sub">Faça seu pedido</div>
 </div>
 
