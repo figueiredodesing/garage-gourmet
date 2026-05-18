@@ -403,6 +403,7 @@ function render() {
       html += '<div class="menu-card'+(citem?' in-cart':'')+'" onclick="addItem(\''+esc(item.id)+'\',\''+esc(item.nome)+'\','+item.preco+')">' +
         qtyBadge +
         '<div class="menu-card-name">'+esc(item.nome)+'</div>' +
+        (item.descricao?'<div style="font-size:11px;color:#888;margin-bottom:6px;line-height:1.4">'+esc(item.descricao)+'</div>':'') +
         '<div class="menu-card-price">'+fmt(item.preco)+'</div>' +
         '</div>';
     });

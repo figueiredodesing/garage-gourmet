@@ -723,6 +723,10 @@ textarea { resize: none; min-height: 72px; }
         <label class="form-label">Nome do produto</label>
         <input type="text" id="c-nome" placeholder="Ex: X-Burguer">
       </div>
+      <div class="form-row">
+        <label class="form-label">Descrição / ingredientes (opcional)</label>
+        <textarea id="c-desc" placeholder="Ex: Pão brioche, blend bovino 150g…" style="min-height:56px"></textarea>
+      </div>
       <div class="input-row">
         <div class="form-row">
           <label class="form-label">Preço (R$)</label>
@@ -731,10 +735,9 @@ textarea { resize: none; min-height: 72px; }
         <div class="form-row">
           <label class="form-label">Categoria</label>
           <select id="c-cat">
-            <option value="Lanches">Lanches</option>
+            <option value="Burgers">Burgers</option>
             <option value="Bebidas">Bebidas</option>
-            <option value="Acompanhamentos">Acompanhamentos</option>
-            <option value="Sobremesas">Sobremesas</option>
+            <option value="Adicionais">Adicionais</option>
             <option value="Outros">Outros</option>
           </select>
         </div>
@@ -950,17 +953,25 @@ var catPedidosAtiva  = 'Todos';
 var catCardapioPillLast = 'Todos';
 
 var DEFAULTS_CARDAPIO = [
-  {id:uid(),nome:'X-Burguer',preco:25,categoria:'Lanches',disponivel:true},
-  {id:uid(),nome:'X-Bacon',preco:30,categoria:'Lanches',disponivel:true},
-  {id:uid(),nome:'X-Frango',preco:22,categoria:'Lanches',disponivel:true},
-  {id:uid(),nome:'Dogão Completo',preco:16,categoria:'Lanches',disponivel:true},
-  {id:uid(),nome:'Refrigerante Lata',preco:6,categoria:'Bebidas',disponivel:true},
-  {id:uid(),nome:'Suco Natural',preco:10,categoria:'Bebidas',disponivel:true},
-  {id:uid(),nome:'Água Mineral',preco:4,categoria:'Bebidas',disponivel:true},
-  {id:uid(),nome:'Cerveja Lata',preco:9,categoria:'Bebidas',disponivel:true},
-  {id:uid(),nome:'Batata Frita',preco:14,categoria:'Acompanhamentos',disponivel:true},
-  {id:uid(),nome:'Onion Rings',preco:16,categoria:'Acompanhamentos',disponivel:true},
-  {id:uid(),nome:'Milkshake',preco:18,categoria:'Sobremesas',disponivel:true}
+  {id:uid(),nome:'Clássico',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar e molho especial da casa',preco:20,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Salada Burguer',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar, alface, tomate, picles e molho especial da casa',preco:23,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Bacon Burguer',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar, bacon crocante, cheddar, cebola caramelizada e molho especial da casa',preco:27,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Especial Garage',descricao:'Pão brioche, blend bovino 150g, queijo prato, bacon crocante, banana da terra, cebola caramelizada, creme de cheddar e molho especial da casa',preco:32,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Garage Duplo',descricao:'Pão brioche, duplo blend bovino 150g, duplo queijo cheddar, duplo bacon crocante e molho especial da casa',preco:35,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Garage Sertanejo',descricao:'Pão brioche, blend bovino 150g, queijo prato, banana da terra, carne seca desfiada, catupiry e molho especial da casa',preco:33,categoria:'Burgers',disponivel:true},
+  {id:uid(),nome:'Coca-Cola ou Guaraná 2L',descricao:'',preco:15,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola Zero 2L',descricao:'',preco:16,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola ou Guaraná 1L',descricao:'',preco:10,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola ou Guaraná Lata',descricao:'',preco:6,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Coca-Cola Lata Zero',descricao:'',preco:7,categoria:'Bebidas',disponivel:true},
+  {id:uid(),nome:'Blend Bovino 150g',descricao:'',preco:10,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Bacon Crocante',descricao:'',preco:4,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Picles',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Ovo',descricao:'',preco:2,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Cebola Caramelizada',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Banana da Terra',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Queijo',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:uid(),nome:'Creme de Cheddar',descricao:'',preco:3,categoria:'Adicionais',disponivel:true}
 ];
 
 function carregar() {
@@ -974,7 +985,8 @@ function carregar() {
       estado.custos    = d.custos    || [];
       estado.pedidoNum = d.pedidoNum || 1;
     }
-    if (!estado.cardapio.length) {
+    var temCardapioAntigo = estado.cardapio.some(function(i){ return i.categoria === 'Lanches' || i.categoria === 'Acompanhamentos' || i.categoria === 'Sobremesas'; });
+    if (!estado.cardapio.length || temCardapioAntigo) {
       estado.cardapio = DEFAULTS_CARDAPIO;
       salvar();
     }
@@ -1180,6 +1192,7 @@ function renderMenuGrid() {
       qtyBadge +
       '<div class="menu-card-cat">'+esc(item.categoria)+'</div>' +
       '<div class="menu-card-name">'+esc(item.nome)+'</div>' +
+      (item.descricao?'<div style="font-size:10px;color:var(--muted);margin-bottom:4px;line-height:1.3">'+esc(item.descricao)+'</div>':'') +
       '<div class="menu-card-price">'+fmt(item.preco)+'</div>' +
       '</div>';
   }).join('');
@@ -1239,6 +1252,7 @@ function categorias() {
 }
 function salvarCardapio() {
   var nome  = document.getElementById('c-nome').value.trim();
+  var desc  = document.getElementById('c-desc').value.trim();
   var preco = parseFloat(document.getElementById('c-preco').value) || 0;
   var cat   = document.getElementById('c-cat').value;
   var editId = document.getElementById('cardapio-edit-id').value;
@@ -1246,15 +1260,16 @@ function salvarCardapio() {
   if (preco <= 0) { toast('Informe um preço válido','err'); return; }
   if (editId) {
     var item = estado.cardapio.find(function(i){ return i.id===editId; });
-    if (item) { item.nome=nome; item.preco=preco; item.categoria=cat; }
+    if (item) { item.nome=nome; item.descricao=desc; item.preco=preco; item.categoria=cat; }
     cancelarEditCardapio();
     toast('Item atualizado');
   } else {
-    estado.cardapio.push({id:uid(), nome:nome, preco:preco, categoria:cat, disponivel:true});
+    estado.cardapio.push({id:uid(), nome:nome, descricao:desc, preco:preco, categoria:cat, disponivel:true});
     toast(nome + ' adicionado ao cardápio');
   }
   salvar();
   document.getElementById('c-nome').value  = '';
+  document.getElementById('c-desc').value  = '';
   document.getElementById('c-preco').value = '';
   renderCardapio();
 }
@@ -1263,6 +1278,7 @@ function editarCardapio(id) {
   if (!item) return;
   document.getElementById('cardapio-edit-id').value = id;
   document.getElementById('c-nome').value  = item.nome;
+  document.getElementById('c-desc').value  = item.descricao || '';
   document.getElementById('c-preco').value = item.preco;
   document.getElementById('c-cat').value   = item.categoria;
   document.getElementById('btn-cancelar-edit').style.display = '';
@@ -1272,6 +1288,7 @@ function editarCardapio(id) {
 function cancelarEditCardapio() {
   document.getElementById('cardapio-edit-id').value = '';
   document.getElementById('c-nome').value  = '';
+  document.getElementById('c-desc').value  = '';
   document.getElementById('c-preco').value = '';
   document.getElementById('btn-cancelar-edit').style.display = 'none';
 }
@@ -1309,6 +1326,7 @@ function renderCardapio() {
       '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:var(--muted);min-width:24px;text-align:right;flex-shrink:0">' + num + '</span>' +
       '<div style="flex:1;min-width:0">' +
         '<div class="cardapio-name">'+esc(item.nome)+(item.disponivel===false?'<span style="color:var(--muted);font-size:11px;margin-left:6px">(pausado)</span>':'')+' </div>' +
+        (item.descricao?'<div style="font-size:11px;color:var(--muted);margin-top:2px;white-space:normal">'+esc(item.descricao)+'</div>':'') +
         '<div class="cardapio-cat">'+esc(item.categoria)+'</div>' +
       '</div>' +
       '<span class="cardapio-price">'+fmt(item.preco)+'</span>' +
