@@ -388,6 +388,15 @@ var KEY = 'gg_v2';
 var carrinho = [];
 var catAtiva = 'Todos';
 var pagSelecionado = '';
+var BURGER_FOTOS = {
+  'Clássico':        'burger-classico.png',
+  'Salada Burguer':  'burger-salada.png',
+  'Bacon Burguer':   'burger-bacon.png',
+  'Especial Garage': 'burger-especial.png',
+  'Garage Duplo':    'burger-duplo.png',
+  'Garage Sertanejo':'burger-sertanejo.png'
+};
+function fotoItem(item) { return item.foto || BURGER_FOTOS[item.nome] || ''; }
 
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -450,7 +459,7 @@ function render() {
       var qtyBadge = citem ? '<div class="menu-card-qty">'+citem.qtd+'</div>' : '';
       html += '<div class="menu-card'+(citem?' in-cart':'')+'" onclick="addItem(\''+esc(item.id)+'\',\''+esc(item.nome)+'\','+item.preco+')">' +
         qtyBadge +
-        (item.foto?'<img class="menu-card-img" src="'+item.foto+'" alt="'+esc(item.nome)+'" loading="lazy">':'') +
+        (fotoItem(item)?'<img class="menu-card-img" src="'+fotoItem(item)+'" alt="'+esc(item.nome)+'" loading="lazy">':'') +
         '<div class="menu-card-name">'+esc(item.nome)+'</div>' +
         (item.descricao?'<div style="font-size:11px;color:#888;margin-bottom:6px;line-height:1.4">'+esc(item.descricao)+'</div>':'') +
         '<div class="menu-card-price">'+fmt(item.preco)+'</div>' +
