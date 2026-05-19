@@ -290,6 +290,21 @@ textarea { resize: none; min-height: 72px; }
 /* EMPTY */
 .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
 .empty-state p { margin-top: 8px; }
+
+/* FOOTER */
+.footer {
+  background: #000;
+  border-top: 1px solid var(--border);
+  padding: 24px 20px 28px;
+  text-align: center;
+  margin-top: 8px;
+}
+.footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); letter-spacing: 0.12em; margin-bottom: 14px; }
+.footer-info { display: flex; flex-direction: column; gap: 8px; }
+.footer-row { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 13px; color: var(--text2); }
+.footer-row a { color: var(--text2); text-decoration: none; }
+.footer-row a:active { color: var(--gold); }
+.footer-icon { font-size: 15px; }
 </style>
 </head>
 <body>
@@ -312,6 +327,24 @@ textarea { resize: none; min-height: 72px; }
 </div>
 
 <div class="content" id="content"></div>
+
+<div class="footer">
+  <div class="footer-logo">Garage Gourmet</div>
+  <div class="footer-info">
+    <div class="footer-row">
+      <span class="footer-icon">📍</span>
+      <span>Rua José Ferreira Costa, 5 — Bairro Serra Azul</span>
+    </div>
+    <div class="footer-row">
+      <span class="footer-icon">📲</span>
+      <a href="tel:+5533984413525">(33) 98441-3525</a>
+    </div>
+    <div class="footer-row">
+      <span class="footer-icon">📸</span>
+      <a href="https://instagram.com/garage_gourmet01" target="_blank">@garage_gourmet01</a>
+    </div>
+  </div>
+</div>
 
 <!-- Barra do carrinho -->
 <div class="cart-bar" id="cart-bar">
