@@ -707,49 +707,58 @@ textarea { resize: none; min-height: 72px; }
 /* LOGIN */
 #login-screen {
   position: fixed; inset: 0;
-  background: radial-gradient(ellipse at 30% 30%, #1a0a0a 0%, #000 60%);
+  background: #000;
   display: flex; align-items: center; justify-content: center;
   z-index: 9999;
 }
 .login-card {
-  background: #111;
-  border: 1px solid #252525;
-  border-radius: 20px; padding: 40px 28px 32px; width: 90%; max-width: 320px;
+  background: #0f0f0f;
+  border: 1px solid #222;
+  border-radius: 24px; padding: 32px 28px 28px; width: 90%; max-width: 300px;
   display: flex; flex-direction: column; align-items: center;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(229,57,53,0.08);
-  position: relative; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.95);
+  position: relative;
 }
 .login-card::before {
   content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(229,57,53,0.6), transparent);
 }
-.login-logo { width: 150px; height: auto; margin-bottom: 8px; filter: url('#rmwhite'); }
+.login-logo-wrap {
+  width: 130px; height: 130px;
+  border-radius: 50%;
+  background: #000;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #222, 0 0 30px rgba(229,57,53,0.15);
+}
+.login-logo { width: 130px; height: 130px; object-fit: cover; mix-blend-mode: screen; }
 .login-title { display: none; }
-.login-sub { font-size: 10px; color: #444; margin-bottom: 32px; letter-spacing: 0.12em; text-transform: uppercase; }
-.login-field { width: 100%; margin-bottom: 10px; }
+.login-sub { font-size: 10px; color: #3a3a3a; margin-bottom: 24px; letter-spacing: 0.14em; text-transform: uppercase; }
+.login-field { width: 100%; margin-bottom: 9px; }
 .login-field input {
-  width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
-  border-radius: 10px; padding: 14px 16px; color: #fff;
+  width: 100%; background: #181818; border: 1px solid #272727;
+  border-radius: 10px; padding: 13px 16px; color: #fff;
   font-size: 14px; outline: none; box-sizing: border-box;
-  -webkit-appearance: none; transition: border-color 0.2s, background 0.2s;
+  -webkit-appearance: none; transition: border-color 0.2s;
   font-family: 'Inter', sans-serif;
 }
-.login-field input:focus { border-color: rgba(229,57,53,0.5); background: #1e1e1e; }
-.login-field input::placeholder { color: #444; }
+.login-field input:focus { border-color: rgba(229,57,53,0.45); }
+.login-field input::placeholder { color: #3a3a3a; }
 .login-btn {
   width: 100%; background: var(--red); border: none;
   border-radius: 10px; color: #fff; font-size: 13px;
-  font-weight: 800; padding: 15px; cursor: pointer; margin-top: 8px;
+  font-weight: 800; padding: 14px; cursor: pointer; margin-top: 6px;
   letter-spacing: 0.14em; text-transform: uppercase;
   font-family: 'Inter', sans-serif;
-  box-shadow: 0 4px 20px rgba(229,57,53,0.35);
+  box-shadow: 0 4px 18px rgba(229,57,53,0.4);
   transition: opacity 0.15s, transform 0.1s;
 }
 .login-btn:active { opacity: 0.85; transform: scale(0.98); }
-.login-error { color: #e53935; font-size: 12px; margin-top: 12px; text-align: center; min-height: 18px; }
-.login-version { font-size: 10px; color: #2a2a2a; margin-top: 28px; letter-spacing: 0.06em; }
+.login-error { color: #e53935; font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; }
+.login-version { font-size: 10px; color: #252525; margin-top: 22px; letter-spacing: 0.06em; }
 
 /* USUÁRIOS / CONFIGURAÇÕES */
 .user-item {
@@ -821,7 +830,9 @@ textarea { resize: none; min-height: 72px; }
 <!-- TELA DE LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet">
+    <div class="login-logo-wrap">
+      <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet">
+    </div>
     <div class="login-title">Garage Gourmet</div>
     <div class="login-sub">Faça login para continuar</div>
     <div class="login-field">
