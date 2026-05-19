@@ -1004,6 +1004,21 @@ textarea { resize: none; min-height: 72px; }
 
   <input type="file" id="artes-file-input" accept="image/*" multiple style="display:none" onchange="artesFromFiles(this)">
   <button class="btn btn-gold" onclick="document.getElementById('artes-file-input').click()">+ Adicionar foto</button>
+
+  <!-- Sync Firebase -->
+  <div class="section" style="margin-top:14px">
+    <div class="section-head"><span class="section-title" style="font-size:14px">☁️ Sincronização entre dispositivos</span></div>
+    <div class="section-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Cole aqui a URL do seu banco Firebase para as fotos aparecerem em todos os dispositivos.</p>
+      <label class="form-label">URL do Firebase</label>
+      <input class="form-input" id="fb-url" placeholder="https://seu-projeto-default-rtdb.firebaseio.com" style="font-size:12px">
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-primary" style="flex:1" onclick="salvarFbUrl()">Salvar URL</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="artesPull()">🔄 Sincronizar agora</button>
+      </div>
+      <div id="fb-status" style="font-size:12px;color:var(--muted);margin-top:8px;text-align:center"></div>
+    </div>
+  </div>
   <div style="height:8px"></div>
   <button class="btn btn-ghost" onclick="artesLimpar()" style="margin-top:0">Limpar todas as artes</button>
 </div>
@@ -1138,7 +1153,7 @@ function irPara(id, btn) {
   if (id==='cardapio')  renderCardapio();
   if (id==='estoque')   renderEstoque();
   if (id==='caixa')     renderCaixa();
-  if (id==='artes')     renderArtes();
+  if (id==='artes')     { renderArtes(); var fi=document.getElementById('fb-url'); if(fi) fi.value=getFbUrl(); }
 }
 
 function irSubtab(id, btn) {
@@ -1885,6 +1900,60 @@ function renderArtes() {
   grid.innerHTML = html;
 }
 
+// ─── FIREBASE SYNC ──────────────────────────────────────────────────────────
+var FB_KEY = 'gg_fb_url';
+
+function getFbUrl() {
+  return localStorage.getItem(FB_KEY) || '';
+}
+
+function salvarFbUrl() {
+  var url = document.getElementById('fb-url').value.trim().replace(/\/$/, '');
+  if (!url) { toast('Cole a URL do Firebase primeiro.', 'err'); return; }
+  localStorage.setItem(FB_KEY, url);
+  toast('URL salva!', 'ok');
+  artesPull();
+}
+
+function fbStatus(msg, cor) {
+  var el = document.getElementById('fb-status');
+  if (el) { el.textContent = msg; el.style.color = cor || 'var(--muted)'; }
+}
+
+function artesPush() {
+  var url = getFbUrl();
+  if (!url) return;
+  fbStatus('Salvando na nuvem…');
+  fetch(url + '/artes.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(estado.artes)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(){ fbStatus('✅ Salvo na nuvem — ' + new Date().toLocaleTimeString(), 'var(--green)'); })
+  .catch(function(){ fbStatus('❌ Erro ao salvar. Verifique a URL.', 'var(--red)'); });
+}
+
+function artesPull() {
+  var url = getFbUrl();
+  if (!url) { toast('Configure a URL do Firebase primeiro.', 'err'); return; }
+  fbStatus('Buscando fotos…');
+  fetch(url + '/artes.json')
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data && Array.isArray(data) && data.length) {
+      estado.artes = data;
+      salvar();
+      renderArtes();
+      fbStatus('✅ Sincronizado — ' + data.length + ' foto(s)', 'var(--green)');
+      toast('Fotos sincronizadas!', 'ok');
+    } else {
+      fbStatus('Nenhuma foto na nuvem ainda.', 'var(--muted)');
+    }
+  })
+  .catch(function(){ fbStatus('❌ Erro ao buscar. Verifique a URL.', 'var(--red)'); });
+}
+
 function artesFromFiles(input) {
   var files = Array.prototype.slice.call(input.files);
   if (!files.length) return;
@@ -1897,6 +1966,7 @@ function artesFromFiles(input) {
       if (done === files.length) {
         salvar();
         renderArtes();
+        artesPush();
         toast('Foto' + (files.length > 1 ? 's adicionadas' : ' adicionada') + '!', 'ok');
       }
     };
@@ -1909,6 +1979,7 @@ function arteDel(idx) {
   estado.artes.splice(idx, 1);
   salvar();
   renderArtes();
+  artesPush();
   toast('Foto removida.', 'warn');
 }
 
