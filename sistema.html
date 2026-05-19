@@ -48,48 +48,60 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 }
 body { padding-top: 108px; }
 .header {
-  background: #000;
-  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, #0d0d0d 0%, #111 100%);
+  border-bottom: 1px solid rgba(229,57,53,0.2);
   padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--red) 0%, transparent 60%);
+  opacity: 0.5;
 }
 .brand img { height: 42px; width: auto; display: block; filter: url('#rmwhite'); }
 .header-meta { text-align: right; }
 .live-row { display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
-.live-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+.live-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; box-shadow: 0 0 6px var(--green); }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
-.live-txt { font-size: 10px; color: var(--text2); letter-spacing: 0.04em; }
-.date-txt { font-size: 11px; color: var(--muted); margin-top: 2px; text-align: right; }
+.live-txt { font-size: 10px; color: var(--text2); letter-spacing: 0.06em; text-transform: uppercase; }
+.date-txt { font-size: 11px; color: var(--muted); margin-top: 3px; text-align: right; }
 
 /* NAV */
 .nav {
-  background: var(--bg2);
+  background: #0d0d0d;
   border-bottom: 1px solid var(--border);
   display: flex;
   overflow-x: auto;
   scrollbar-width: none;
+  padding: 0 4px;
 }
 .nav::-webkit-scrollbar { display: none; }
 .nav-btn {
   flex: none;
-  padding: 7px 14px;
-  border-radius: 8px;
+  padding: 10px 14px;
   border: none;
-  font-size: 12px;
-  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  font-size: 11px;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  color: var(--text2);
+  color: var(--muted);
   background: transparent;
-  transition: all 0.15s;
-  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  position: relative;
 }
-.nav-btn:active { opacity: 0.7; }
+.nav-btn:active { opacity: 0.6; }
 .nav-btn.active {
-  background: rgba(229,57,53,0.15);
   color: var(--red);
+  border-bottom-color: var(--red);
 }
 
 /* VIEWS */
@@ -114,10 +126,20 @@ body { padding-top: 108px; }
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px;
+  padding: 14px 14px 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-.metric-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-.metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em; line-height: 1.1; }
+.metric::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(229,57,53,0.5), transparent);
+}
+.metric-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 700; }
+.metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.04em; line-height: 1.1; }
 .metric-sub { font-size: 11px; margin-top: 3px; color: var(--muted); }
 .metric-card {
   background: var(--bg2);
@@ -137,8 +159,6 @@ body { padding-top: 108px; }
   background: var(--red);
   opacity: 0.6;
 }
-.metric-value { font-size: 22px; font-weight: 700; color: var(--text); }
-.metric-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
 .up { color: var(--green); }
 .dn { color: var(--red); }
 
@@ -149,15 +169,27 @@ body { padding-top: 108px; }
   border-radius: var(--radius);
   margin-bottom: 12px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 .section-head {
-  padding: 11px 14px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: rgba(255,255,255,0.02);
 }
-.section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text2); }
+.section-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text2);
+  display: flex; align-items: center; gap: 7px;
+}
+.section-title::before {
+  content: '';
+  display: inline-block; width: 3px; height: 12px;
+  background: var(--red); border-radius: 2px;
+  flex-shrink: 0;
+}
 .section-body { padding: 12px 14px; }
 
 /* PILLS (category filter) */
@@ -345,21 +377,22 @@ textarea { resize: none; min-height: 72px; }
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+  font-family: 'Inter', sans-serif;
 }
-.btn:active { opacity: 0.7; }
-.btn-red { background: var(--red); color: #fff; }
-.btn-primary { background: var(--red); color: #fff; }
-.btn-gold { background: var(--gold); color: #0a0a0a; }
+.btn:active { opacity: 0.8; transform: scale(0.98); }
+.btn-red { background: var(--red); color: #fff; box-shadow: 0 4px 16px rgba(229,57,53,0.3); }
+.btn-primary { background: var(--red); color: #fff; box-shadow: 0 4px 16px rgba(229,57,53,0.25); }
+.btn-gold { background: var(--gold); color: #0a0a0a; box-shadow: 0 4px 16px rgba(245,166,35,0.25); }
 .btn-ghost { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
 .btn-sm {
   width: auto;
-  padding: 6px 14px;
-  font-size: 12px;
+  padding: 7px 14px;
+  font-size: 11px;
   border-radius: 6px;
 }
 .btn-row { display: flex; gap: 8px; }
@@ -481,21 +514,23 @@ textarea { resize: none; min-height: 72px; }
 .empty { color: var(--muted); font-size: 13px; padding: 10px 0; }
 
 /* TOASTS */
-.toast-wrap { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; width: calc(100% - 28px); max-width: 380px; display: flex; flex-direction: column; gap: 6px; }
+.toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; width: calc(100% - 28px); max-width: 360px; display: flex; flex-direction: column; gap: 6px; }
 .toast {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-sm);
-  padding: 11px 14px;
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 12px 16px;
   font-size: 13px;
-  font-weight: 500;
-  animation: toastIn 0.25s ease;
+  font-weight: 600;
+  animation: toastIn 0.22s cubic-bezier(0.34,1.56,0.64,1);
   border-left: 3px solid var(--muted);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
 }
-.toast.ok   { border-left-color: var(--green); }
-.toast.err  { border-left-color: var(--red); }
-.toast.warn { border-left-color: var(--yellow); }
-@keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.toast.ok   { border-left-color: var(--green); color: #fff; }
+.toast.err  { border-left-color: var(--red); color: #fff; }
+.toast.warn { border-left-color: var(--yellow); color: #fff; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(16px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* DIVIDER */
 .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
@@ -609,10 +644,10 @@ textarea { resize: none; min-height: 72px; }
 .total-bar-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.04em; }
 
 /* SUBTABS */
-.subtabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.subtabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 14px; gap: 0; }
 .subtab {
   flex: 1;
-  padding: 10px;
+  padding: 11px 10px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -671,47 +706,114 @@ textarea { resize: none; min-height: 72px; }
 
 /* LOGIN */
 #login-screen {
-  position: fixed; inset: 0; background: #000;
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 30% 30%, #1a0a0a 0%, #000 60%);
   display: flex; align-items: center; justify-content: center;
   z-index: 9999;
 }
 .login-card {
-  background: #141414;
-  border: 1px solid #2a2a2a;
-  border-radius: 24px; padding: 36px 28px 28px; width: 90%; max-width: 320px;
+  background: #111;
+  border: 1px solid #252525;
+  border-radius: 20px; padding: 40px 28px 32px; width: 90%; max-width: 320px;
   display: flex; flex-direction: column; align-items: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(229,57,53,0.08);
+  position: relative; overflow: hidden;
 }
-.login-logo { width: 140px; height: auto; margin-bottom: 6px; }
+.login-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+}
+.login-logo { width: 150px; height: auto; margin-bottom: 8px; filter: url('#rmwhite'); }
 .login-title { display: none; }
-.login-sub { font-size: 11px; color: #555; margin-bottom: 28px; letter-spacing: 0.05em; text-transform: uppercase; }
+.login-sub { font-size: 10px; color: #444; margin-bottom: 32px; letter-spacing: 0.12em; text-transform: uppercase; }
 .login-field { width: 100%; margin-bottom: 10px; }
 .login-field input {
-  width: 100%; background: #1e1e1e; border: 1px solid #303030;
-  border-radius: 10px; padding: 13px 16px; color: #fff;
+  width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
+  border-radius: 10px; padding: 14px 16px; color: #fff;
   font-size: 14px; outline: none; box-sizing: border-box;
-  -webkit-appearance: none;
+  -webkit-appearance: none; transition: border-color 0.2s, background 0.2s;
+  font-family: 'Inter', sans-serif;
 }
-.login-field input:focus { border-color: #555; background: #222; }
-.login-field input::placeholder { color: #555; }
+.login-field input:focus { border-color: rgba(229,57,53,0.5); background: #1e1e1e; }
+.login-field input::placeholder { color: #444; }
 .login-btn {
-  width: 100%; background: #222; border: 1px solid #3a3a3a;
+  width: 100%; background: var(--red); border: none;
   border-radius: 10px; color: #fff; font-size: 13px;
-  font-weight: 700; padding: 14px; cursor: pointer; margin-top: 6px;
-  letter-spacing: 0.12em;
+  font-weight: 800; padding: 15px; cursor: pointer; margin-top: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 20px rgba(229,57,53,0.35);
+  transition: opacity 0.15s, transform 0.1s;
 }
-.login-btn:active { background: #2a2a2a; }
-.login-error { color: #e53935; font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; }
-.login-version { font-size: 11px; color: #333; margin-top: 24px; }
+.login-btn:active { opacity: 0.85; transform: scale(0.98); }
+.login-error { color: #e53935; font-size: 12px; margin-top: 12px; text-align: center; min-height: 18px; }
+.login-version { font-size: 10px; color: #2a2a2a; margin-top: 28px; letter-spacing: 0.06em; }
 
-/* USUÁRIOS */
+/* USUÁRIOS / CONFIGURAÇÕES */
 .user-item {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 0; border-bottom: 1px solid var(--border);
+  padding: 11px 0; border-bottom: 1px solid var(--border);
 }
 .user-item:last-child { border: none; }
+.user-item-left { display: flex; align-items: center; gap: 10px; }
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--bg4), #333);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--text2);
+  flex-shrink: 0; text-transform: uppercase;
+}
 .user-name { font-size: 13px; font-weight: 600; color: var(--text); }
-.user-role { font-size: 11px; color: var(--muted); }
+.user-role { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Config Banner (sessão) */
+.cfg-user-banner {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, #1a0d0d, #141414);
+  border: 1px solid rgba(229,57,53,0.2);
+  border-radius: var(--radius); padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.cfg-user-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), #c62828);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff;
+  flex-shrink: 0; text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(229,57,53,0.4);
+}
+.cfg-user-info { flex: 1; min-width: 0; }
+.cfg-user-name { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cfg-user-status { font-size: 11px; color: var(--green); margin-top: 3px; font-weight: 600; }
+.cfg-logout-btn {
+  background: transparent; border: 1px solid rgba(229,57,53,0.3);
+  border-radius: 8px; color: var(--red); font-size: 12px; font-weight: 700;
+  padding: 8px 14px; cursor: pointer; white-space: nowrap;
+  transition: all 0.15s; letter-spacing: 0.04em;
+}
+.cfg-logout-btn:active { opacity: 0.7; }
+
+/* Config add user box */
+.cfg-add-user-box {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+.cfg-add-user-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px;
+}
+
+/* Config link box */
+.cfg-link-box {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  word-break: break-all; font-size: 11px; color: var(--text2);
+  margin-bottom: 10px; font-family: monospace; line-height: 1.5;
+}
 </style>
 </head>
 <body>
@@ -719,7 +821,7 @@ textarea { resize: none; min-height: 72px; }
 <!-- TELA DE LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet" style="filter:url('#rmwhite')">
+    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet">
     <div class="login-title">Garage Gourmet</div>
     <div class="login-sub">Faça login para continuar</div>
     <div class="login-field">
@@ -1268,19 +1370,28 @@ textarea { resize: none; min-height: 72px; }
 <!-- ===== CONFIGURAÇÕES ===== -->
 <div id="view-config" class="view">
 
+  <!-- Sessão atual (destaque no topo) -->
+  <div class="cfg-user-banner" id="cfg-user-banner">
+    <div class="cfg-user-avatar" id="cfg-avatar-initial">A</div>
+    <div class="cfg-user-info">
+      <div class="cfg-user-name" id="cfg-usuario-atual">—</div>
+      <div class="cfg-user-status">● Sessão ativa</div>
+    </div>
+    <button class="cfg-logout-btn" onclick="logout()">Sair</button>
+  </div>
+
   <!-- Usuários -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">Usuários</span>
+      <span class="section-title">Usuários do sistema</span>
     </div>
     <div class="section-body">
-      <div id="cfg-usuarios-lista" style="margin-bottom:14px"></div>
-      <div style="border-top:1px solid var(--border);padding-top:14px">
-        <label class="form-label">Novo usuário</label>
-        <input class="form-input" id="cfg-novo-nome" placeholder="Nome de usuário" style="margin-bottom:8px">
-        <label class="form-label">Senha</label>
-        <input class="form-input" type="password" id="cfg-nova-senha" placeholder="Senha">
-        <button class="btn btn-primary" style="margin-top:10px;width:100%" onclick="cfgAdicionarUsuario()">+ Adicionar usuário</button>
+      <div id="cfg-usuarios-lista" style="margin-bottom:16px"></div>
+      <div class="cfg-add-user-box">
+        <div class="cfg-add-user-title">Adicionar novo usuário</div>
+        <input type="text" id="cfg-novo-nome" placeholder="Nome de usuário" style="margin-bottom:8px">
+        <input type="password" id="cfg-nova-senha" placeholder="Senha">
+        <button class="btn btn-primary" style="margin-top:12px" onclick="cfgAdicionarUsuario()">+ Adicionar usuário</button>
       </div>
     </div>
   </div>
@@ -1289,11 +1400,11 @@ textarea { resize: none; min-height: 72px; }
   <div class="section">
     <div class="section-head"><span class="section-title">WhatsApp</span></div>
     <div class="section-body">
-      <label class="form-label">Número para notificações</label>
-      <input class="form-input" id="cfg-wpp" type="tel" placeholder="Ex: 33984172773">
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn btn-primary" style="flex:1" onclick="cfgSalvarWpp()">Salvar</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="cfgTestarWpp()">Testar</button>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">Número usado para enviar pedidos e notificações via WhatsApp.</p>
+      <input type="tel" id="cfg-wpp" placeholder="Ex: 33984172773">
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-primary" onclick="cfgSalvarWpp()">Salvar</button>
+        <button class="btn btn-ghost" onclick="cfgTestarWpp()">Testar</button>
       </div>
     </div>
   </div>
@@ -1302,31 +1413,25 @@ textarea { resize: none; min-height: 72px; }
   <div class="section">
     <div class="section-head"><span class="section-title">Cardápio Digital</span></div>
     <div class="section-body" id="cfg-cardapio-body">
-      <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;word-break:break-all;font-size:12px;color:var(--text2)" id="cfg-link-cardapio"></div>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button class="btn btn-primary" style="flex:1" onclick="cfgCopiarLink()">Copiar link</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="cfgAbrirCardapio()">Abrir</button>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Link do cardápio para compartilhar com clientes:</p>
+      <div class="cfg-link-box" id="cfg-link-cardapio"></div>
+      <div class="btn-row" style="margin-bottom:16px">
+        <button class="btn btn-primary" onclick="cfgCopiarLink()">📋 Copiar link</button>
+        <button class="btn btn-ghost" onclick="cfgAbrirCardapio()">↗ Abrir</button>
       </div>
       <div style="text-align:center">
-        <img id="cfg-qr" style="width:140px;height:140px;border-radius:10px;background:#fff;padding:6px">
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">QR Code</div>
+        <img id="cfg-qr" style="width:150px;height:150px;border-radius:12px;background:#fff;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,0.4)">
       </div>
     </div>
   </div>
 
-  <!-- Sessão -->
+  <!-- Dados do dia -->
   <div class="section">
-    <div class="section-head"><span class="section-title">Sessão</span></div>
+    <div class="section-head"><span class="section-title">Fechar dia</span></div>
     <div class="section-body">
-      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Logado como: <strong id="cfg-usuario-atual" style="color:var(--text)"></strong></div>
-      <button class="btn btn-ghost" style="width:100%;color:var(--red);border-color:var(--red)" onclick="logout()">Sair do sistema</button>
-    </div>
-  </div>
-
-  <!-- Dados -->
-  <div class="section">
-    <div class="section-head"><span class="section-title">Dados</span></div>
-    <div class="section-body">
-      <button class="btn btn-ghost" style="width:100%" onclick="confirmarZerarDia()">Fechar dia / zerar dados</button>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">Salva um snapshot no histórico e zera os pedidos do dia atual.</p>
+      <button class="btn btn-ghost" style="color:var(--red);border-color:rgba(229,57,53,0.3)" onclick="confirmarZerarDia()">Fechar dia / zerar dados</button>
     </div>
   </div>
 
@@ -2695,9 +2800,13 @@ function renderConfig() {
     if (!users.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px">Nenhum usuário.</div>'; }
     else el.innerHTML = users.map(function(u, i) {
       var isAtual = atual && atual.nome === u.nome;
+      var ini = (u.nome||'?')[0].toUpperCase();
       return '<div class="user-item">' +
-        '<div><div class="user-name">' + esc(u.nome) + (u.admin ? ' ⭐' : '') + '</div>' +
-        '<div class="user-role">' + (isAtual ? '● Online agora' : (u.admin ? 'Administrador' : 'Usuário')) + '</div></div>' +
+        '<div class="user-item-left">' +
+          '<div class="user-avatar" style="' + (isAtual ? 'background:linear-gradient(135deg,var(--red),#c62828);color:#fff;box-shadow:0 2px 8px rgba(229,57,53,0.3)' : '') + '">' + ini + '</div>' +
+          '<div><div class="user-name">' + esc(u.nome) + (u.admin ? ' <span style="font-size:10px;color:var(--gold)">ADMIN</span>' : '') + '</div>' +
+          '<div class="user-role">' + (isAtual ? '● Online agora' : (u.admin ? 'Administrador' : 'Usuário')) + '</div></div>' +
+        '</div>' +
         (!isAtual && users.length > 1 ? '<button class="icon-btn" onclick="cfgRemoverUsuario('+i+')" style="color:var(--red);font-size:20px;padding:4px 8px">×</button>' : '') +
       '</div>';
     }).join('');
@@ -2711,9 +2820,11 @@ function renderConfig() {
   if (linkEl) linkEl.textContent = url;
   var qrEl = document.getElementById('cfg-qr');
   if (qrEl) qrEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url);
-  // Usuário atual
+  // Usuário atual (banner)
   var uaEl = document.getElementById('cfg-usuario-atual');
   if (uaEl && atual) uaEl.textContent = atual.nome;
+  var avEl = document.getElementById('cfg-avatar-initial');
+  if (avEl && atual) avEl.textContent = (atual.nome||'?')[0].toUpperCase();
 }
 
 function cfgAdicionarUsuario() {
