@@ -644,9 +644,66 @@ textarea { resize: none; min-height: 72px; }
 .hist-top-item { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; font-size: 12px; color: var(--text2); border-bottom: 1px solid var(--border); }
 .hist-top-item:last-child { border: none; }
 .hist-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
+
+/* LOGIN */
+#login-screen {
+  position: fixed; inset: 0; background: #0a0a0a;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; flex-direction: column; gap: 0;
+}
+.login-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 340px;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.login-logo { height: 70px; margin-bottom: 20px; }
+.login-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.1em; color: var(--text); margin-bottom: 6px; }
+.login-sub { font-size: 12px; color: var(--muted); margin-bottom: 24px; }
+.login-field { width: 100%; margin-bottom: 12px; }
+.login-field input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 12px 14px; color: var(--text);
+  font-size: 14px; outline: none; box-sizing: border-box;
+}
+.login-field input:focus { border-color: var(--red); }
+.login-btn {
+  width: 100%; background: var(--red); border: none; border-radius: var(--radius-sm);
+  color: #fff; font-size: 15px; font-weight: 700; padding: 13px; cursor: pointer;
+  margin-top: 4px; letter-spacing: 0.04em;
+}
+.login-btn:active { opacity: 0.85; }
+.login-error { color: var(--red); font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; }
+.login-version { font-size: 11px; color: var(--muted); margin-top: 20px; }
+
+/* USUÁRIOS */
+.user-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.user-item:last-child { border: none; }
+.user-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.user-role { font-size: 11px; color: var(--muted); }
 </style>
 </head>
 <body>
+
+<!-- TELA DE LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet" style="filter:invert(1)">
+    <div class="login-title">Sistema de Gestão</div>
+    <div class="login-sub">Faça login para continuar</div>
+    <div class="login-field">
+      <input type="text" id="login-user" placeholder="Usuário" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+    </div>
+    <div class="login-field">
+      <input type="password" id="login-pass" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')tentarLogin()">
+    </div>
+    <button class="login-btn" onclick="tentarLogin()">ENTRAR</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-version">Garage Gourmet © 2026</div>
+  </div>
+</div>
 
 <svg style="position:absolute;width:0;height:0" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -674,6 +731,7 @@ textarea { resize: none; min-height: 72px; }
     <button class="nav-btn" onclick="irPara('caixa',this)">Caixa</button>
     <button class="nav-btn" onclick="irPara('artes',this)">Artes</button>
     <button class="nav-btn" onclick="irPara('historico',this)">Histórico</button>
+    <button class="nav-btn" onclick="logout()" style="margin-left:auto;color:var(--muted)">Sair</button>
   </div>
 </div>
 
@@ -1062,6 +1120,20 @@ textarea { resize: none; min-height: 72px; }
       <div class="section-body" id="rel-pagamentos"><div class="empty">Sem dados.</div></div>
     </div>
 
+    <div class="section" style="margin-top:14px">
+      <div class="section-head"><span class="section-title">Usuários do Sistema</span></div>
+      <div class="section-body">
+        <div id="usuarios-lista" style="margin-bottom:14px"></div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <label class="form-label">Novo usuário</label>
+          <input class="form-input" id="novo-usuario-nome" placeholder="Nome de usuário" style="margin-bottom:8px">
+          <label class="form-label">Senha</label>
+          <input class="form-input" type="password" id="novo-usuario-senha" placeholder="Senha">
+          <button class="btn btn-primary" style="margin-top:10px;width:100%" onclick="adicionarUsuario()">+ Adicionar usuário</button>
+        </div>
+      </div>
+    </div>
+
     <div style="margin-top:16px">
       <button class="btn btn-ghost" onclick="confirmarZerarDia()">Fechar dia / zerar dados</button>
     </div>
@@ -1225,6 +1297,87 @@ function toast(msg, tipo) {
   setTimeout(function(){ el.style.opacity='0'; el.style.transition='opacity 0.3s'; setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 300); }, 2800);
 }
 
+// ─── LOGIN / USUÁRIOS ────────────────────────────────────────────────────────
+var USERS_KEY    = 'gg_users';
+var SESSION_KEY  = 'gg_session';
+
+function getUsuarios() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; } catch(e) { return []; }
+}
+function salvarUsuarios(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+
+function initUsuarios() {
+  var users = getUsuarios();
+  if (!users.length) {
+    salvarUsuarios([{ nome: 'admin', senha: btoa('1234'), admin: true }]);
+  }
+}
+
+function isLoggedIn() { return !!sessionStorage.getItem(SESSION_KEY); }
+function getUsuarioAtual() { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e) { return null; } }
+
+function tentarLogin() {
+  var nome  = (document.getElementById('login-user').value || '').trim();
+  var senha = (document.getElementById('login-pass').value || '');
+  var errEl = document.getElementById('login-error');
+  if (!nome || !senha) { errEl.textContent = 'Preencha usuário e senha.'; return; }
+  var users = getUsuarios();
+  var user  = users.filter(function(u){ return u.nome === nome && u.senha === btoa(senha); })[0];
+  if (user) {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ nome: user.nome, admin: user.admin }));
+    document.getElementById('login-screen').style.display = 'none';
+    errEl.textContent = '';
+  } else {
+    errEl.textContent = 'Usuário ou senha incorretos.';
+    document.getElementById('login-pass').value = '';
+  }
+}
+
+function logout() {
+  if (!confirm('Deseja sair do sistema?')) return;
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+function renderUsuarios() {
+  var users = getUsuarios();
+  var atual = getUsuarioAtual();
+  var el = document.getElementById('usuarios-lista');
+  if (!el) return;
+  if (!users.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px">Nenhum usuário.</div>'; return; }
+  el.innerHTML = users.map(function(u, i) {
+    var isAtual = atual && atual.nome === u.nome;
+    return '<div class="user-item">' +
+      '<div><div class="user-name">' + esc(u.nome) + (u.admin ? ' ⭐' : '') + '</div>' +
+      '<div class="user-role">' + (isAtual ? 'Você está logado aqui' : (u.admin ? 'Administrador' : 'Usuário')) + '</div></div>' +
+      (!isAtual && users.length > 1 ? '<button class="icon-btn" onclick="removerUsuario('+i+')" style="color:var(--red);font-size:18px">×</button>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function adicionarUsuario() {
+  var nome  = (document.getElementById('novo-usuario-nome').value || '').trim();
+  var senha = (document.getElementById('novo-usuario-senha').value || '').trim();
+  if (!nome || !senha) { toast('Preencha nome e senha.', 'err'); return; }
+  var users = getUsuarios();
+  if (users.some(function(u){ return u.nome === nome; })) { toast('Usuário já existe.', 'err'); return; }
+  users.push({ nome: nome, senha: btoa(senha), admin: false });
+  salvarUsuarios(users);
+  renderUsuarios();
+  document.getElementById('novo-usuario-nome').value = '';
+  document.getElementById('novo-usuario-senha').value = '';
+  toast('Usuário adicionado!', 'ok');
+}
+
+function removerUsuario(idx) {
+  var users = getUsuarios();
+  if (!confirm('Remover usuário "' + users[idx].nome + '"?')) return;
+  users.splice(idx, 1);
+  salvarUsuarios(users);
+  renderUsuarios();
+  toast('Usuário removido.', 'warn');
+}
+
 // ─── STATE ──────────────────────────────────────────────────────────────
 var KEY = 'gg_v2';
 var SB_URL_DEFAULT = 'https://wcjzrcoftemcuzbqbamf.supabase.co';
@@ -1314,7 +1467,7 @@ function irPara(id, btn) {
   if (id==='cozinha')   renderCozinha();
   if (id==='cardapio')  renderCardapio();
   if (id==='estoque')   renderEstoque();
-  if (id==='caixa')     renderCaixa();
+  if (id==='caixa')     { renderCaixa(); renderUsuarios(); }
   if (id==='artes')     { renderArtes(); atualizarSbUI(); artesSync(); }
   if (id==='historico') renderHistorico();
 }
@@ -2447,7 +2600,13 @@ function artesLimpar() {
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────────
+initUsuarios();
 carregar();
+if (!isLoggedIn()) {
+  // login screen already visible
+} else {
+  document.getElementById('login-screen').style.display = 'none';
+}
 setTimeout(function() {
   sbPullEstado(function(ok) { if (ok) renderDashboard(); });
   artesSync();
