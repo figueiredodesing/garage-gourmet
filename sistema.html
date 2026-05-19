@@ -707,16 +707,16 @@ textarea { resize: none; min-height: 72px; }
 /* LOGIN */
 #login-screen {
   position: fixed; inset: 0;
-  background: #000;
+  background: #1a1a1a;
   display: flex; align-items: center; justify-content: center;
   z-index: 9999;
 }
 .login-card {
-  background: #0f0f0f;
-  border: 1px solid #222;
+  background: #222;
+  border: 1px solid #2e2e2e;
   border-radius: 24px; padding: 32px 28px 28px; width: 90%; max-width: 300px;
   display: flex; flex-direction: column; align-items: center;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.95);
+  box-shadow: none;
   position: relative;
 }
 .login-card::before {
@@ -733,14 +733,14 @@ textarea { resize: none; min-height: 72px; }
 .login-sub { font-size: 10px; color: #3a3a3a; margin-bottom: 24px; letter-spacing: 0.14em; text-transform: uppercase; }
 .login-field { width: 100%; margin-bottom: 9px; }
 .login-field input {
-  width: 100%; background: #181818; border: 1px solid #272727;
+  width: 100%; background: #2e2e2e; border: 1px solid #383838;
   border-radius: 10px; padding: 13px 16px; color: #fff;
   font-size: 14px; outline: none; box-sizing: border-box;
   -webkit-appearance: none; transition: border-color 0.2s;
   font-family: 'Inter', sans-serif;
 }
-.login-field input:focus { border-color: rgba(229,57,53,0.45); }
-.login-field input::placeholder { color: #3a3a3a; }
+.login-field input:focus { border-color: rgba(229,57,53,0.5); }
+.login-field input::placeholder { color: #666; }
 .login-btn {
   width: 100%; background: var(--red); border: none;
   border-radius: 10px; color: #fff; font-size: 13px;
@@ -752,7 +752,7 @@ textarea { resize: none; min-height: 72px; }
 }
 .login-btn:active { opacity: 0.85; transform: scale(0.98); }
 .login-error { color: #e53935; font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; }
-.login-version { font-size: 10px; color: #252525; margin-top: 22px; letter-spacing: 0.06em; }
+.login-version { font-size: 10px; color: #444; margin-top: 22px; letter-spacing: 0.06em; }
 
 /* USUÁRIOS / CONFIGURAÇÕES */
 .user-item {
