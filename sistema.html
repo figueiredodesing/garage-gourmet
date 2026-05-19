@@ -690,8 +690,8 @@ textarea { resize: none; min-height: 72px; }
 <!-- TELA DE LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet" style="filter:invert(1)">
-    <div class="login-title">Sistema de Gestão</div>
+    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet" style="filter:brightness(0) invert(1);height:80px;margin-bottom:8px">
+    <div class="login-title">Garage Gourmet</div>
     <div class="login-sub">Faça login para continuar</div>
     <div class="login-field">
       <input type="text" id="login-user" placeholder="Usuário" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
@@ -2450,7 +2450,8 @@ function sbPushEstado() {
     cardapio:  estado.cardapio  || [],
     estoque:   estado.estoque   || [],
     whatsapp:  estado.whatsapp  || '',
-    pedidoNum: estado.pedidoNum || 1
+    pedidoNum: estado.pedidoNum || 1,
+    artes:     (estado.artes || []).map(function(a){ return { nome: a.nome, src: a.src, sbFile: a.sbFile||'' }; })
   });
   return fetch(c.url + '/storage/v1/object/dados/estado.json', {
     method: 'POST',
@@ -2471,6 +2472,7 @@ function sbPullEstado(callback) {
     if (data.cardapio && data.cardapio.length) estado.cardapio = data.cardapio;
     if (data.estoque  && data.estoque.length)  estado.estoque  = data.estoque;
     if (data.whatsapp) estado.whatsapp = data.whatsapp;
+    if (data.artes    && data.artes.length)    estado.artes    = data.artes;
     salvar();
     if (callback) callback(true);
   })
@@ -2504,18 +2506,16 @@ function artesPushLista() {
 }
 
 function artesSync() {
-  var c = getSb();
   sbSetStatus('Sincronizando…', '');
-  fetch(c.url + '/storage/v1/object/public/dados/artes.json?t=' + Date.now())
-  .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
-  .then(function(artes) {
-    if (!Array.isArray(artes)) throw new Error();
-    estado.artes = artes;
-    salvar(); renderArtes();
-    sbSetStatus('✅ ' + artes.length + ' foto(s) — ' + new Date().toLocaleTimeString(), 'ok');
-    if (artes.length > 0) toast(artes.length + ' arte(s) carregada(s)!', 'ok');
-  })
-  .catch(function() { sbSetStatus('Sem fotos na nuvem ainda.', ''); });
+  sbPullEstado(function(ok) {
+    if (ok) {
+      renderArtes();
+      var n = (estado.artes || []).length;
+      sbSetStatus('✅ ' + n + ' foto(s) — ' + new Date().toLocaleTimeString(), 'ok');
+    } else {
+      sbSetStatus('Sem dados na nuvem ainda.', '');
+    }
+  });
 }
 
 // ─── ARTES BACKUP (exportar / importar) ─────────────────────────────────────
@@ -2562,6 +2562,7 @@ function artesFromFiles(input) {
         done++;
         if (done === files.length) {
           salvar(); renderArtes();
+          sbPushEstado().catch(function(){});
           sbSetStatus('✅ ' + files.length + ' foto(s) salva(s) na nuvem — ' + new Date().toLocaleTimeString(), 'ok');
           toast('Foto(s) salvas na nuvem!', 'ok');
         }
@@ -2591,7 +2592,7 @@ function arteDel(idx) {
   if (isSbAtivo() && arte && arte.sbFile) sbRemove(arte.sbFile).catch(function(){});
   estado.artes.splice(idx, 1);
   salvar(); renderArtes();
-  artesPushLista().catch(function(){});
+  sbPushEstado().catch(function(){});
   toast('Foto removida.', 'warn');
 }
 
