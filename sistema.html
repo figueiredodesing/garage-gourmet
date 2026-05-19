@@ -708,6 +708,7 @@ textarea { resize: none; min-height: 72px; }
     <div class="section-head">
       <span class="section-title">Últimos pedidos</span>
       <span id="d-active-badge" class="k-count-badge" style="display:none"></span>
+      <button id="btn-sync" onclick="sincronizarAgora()" title="Sincronizar com a nuvem" style="background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--text2);padding:4px 10px;font-size:14px;cursor:pointer">☁️</button>
     </div>
     <div class="section-body" id="d-pedidos-lista"><div class="empty">Nenhum pedido ainda.</div></div>
   </div>
@@ -1226,6 +1227,8 @@ function toast(msg, tipo) {
 
 // ─── STATE ──────────────────────────────────────────────────────────────
 var KEY = 'gg_v2';
+var SB_URL_DEFAULT = 'https://wcjzrcoftemcuzbqbamf.supabase.co';
+var SB_KEY_DEFAULT = 'sb_publishable_KpXSLJOaDnKJfFGPKrJh2g_oEPCSCJZ';
 var estado = {
   pedidos:   [],
   cardapio:  [],
@@ -1951,6 +1954,7 @@ function confirmarZerarDia() {
   estado.custos    = [];
   estado.pedidoNum = 1;
   salvar();
+  sbPushEstado().catch(function(){});
   carrinho = [];
   renderDashboard();
   renderPedidos();
@@ -2214,9 +2218,12 @@ function renderArtes() {
 var SB_CFG_KEY = 'gg_sb_cfg';
 
 function getSb() {
-  try { return JSON.parse(localStorage.getItem(SB_CFG_KEY)) || {}; } catch(e) { return {}; }
+  try {
+    var stored = JSON.parse(localStorage.getItem(SB_CFG_KEY)) || {};
+    return { url: stored.url || SB_URL_DEFAULT, key: stored.key || SB_KEY_DEFAULT };
+  } catch(e) { return { url: SB_URL_DEFAULT, key: SB_KEY_DEFAULT }; }
 }
-function isSbAtivo() { var c = getSb(); return !!(c.url && c.key); }
+function isSbAtivo() { return true; }
 
 function atualizarSbUI() {
   var ativo = isSbAtivo();
@@ -2280,6 +2287,57 @@ function sbRemove(sbFile) {
     method: 'DELETE',
     headers: { 'Authorization': 'Bearer ' + c.key, 'Content-Type': 'application/json' },
     body: JSON.stringify({ prefixes: [sbFile] })
+  });
+}
+
+function sbPushEstado() {
+  var c = getSb();
+  var dados = JSON.stringify({
+    historico: estado.historico || [],
+    cardapio:  estado.cardapio  || [],
+    estoque:   estado.estoque   || [],
+    whatsapp:  estado.whatsapp  || '',
+    pedidoNum: estado.pedidoNum || 1
+  });
+  return fetch(c.url + '/storage/v1/object/dados/estado.json', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + c.key, 'Content-Type': 'application/json', 'x-upsert': 'true' },
+    body: dados
+  });
+}
+
+function sbPullEstado(callback) {
+  var c = getSb();
+  fetch(c.url + '/storage/v1/object/public/dados/estado.json?t=' + Date.now())
+  .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+  .then(function(data) {
+    var merged = {};
+    (estado.historico || []).forEach(function(d) { merged[d.data] = d; });
+    (data.historico  || []).forEach(function(d) { merged[d.data] = d; });
+    estado.historico = Object.keys(merged).sort().map(function(k) { return merged[k]; });
+    if (data.cardapio && data.cardapio.length) estado.cardapio = data.cardapio;
+    if (data.estoque  && data.estoque.length)  estado.estoque  = data.estoque;
+    if (data.whatsapp) estado.whatsapp = data.whatsapp;
+    salvar();
+    if (callback) callback(true);
+  })
+  .catch(function() { if (callback) callback(false); });
+}
+
+function sincronizarAgora() {
+  var btn = document.getElementById('btn-sync');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  sbPullEstado(function(ok) {
+    if (btn) { btn.textContent = '☁️'; btn.disabled = false; }
+    if (ok) {
+      renderDashboard();
+      if (typeof renderHistorico === 'function' && document.getElementById('view-historico') && document.getElementById('view-historico').classList.contains('active')) renderHistorico();
+      toast('✅ Sincronizado! ' + (estado.historico||[]).length + ' registro(s) no histórico.', 'ok');
+    } else {
+      sbPushEstado().then(function() {
+        toast('✅ Dados enviados para a nuvem!', 'ok');
+      }).catch(function() { toast('Erro ao sincronizar.', 'err'); });
+    }
   });
 }
 
@@ -2390,6 +2448,9 @@ function artesLimpar() {
 
 // ─── INIT ────────────────────────────────────────────────────────────────
 carregar();
+setTimeout(function() {
+  sbPullEstado(function(ok) { if (ok) renderDashboard(); });
+}, 500);
 atualizarData();
 onPagChange();
 renderDashboard();
