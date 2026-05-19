@@ -74,20 +74,23 @@ body { padding-top: 108px; }
 .nav::-webkit-scrollbar { display: none; }
 .nav-btn {
   flex: none;
-  padding: 12px 18px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: none;
+  padding: 7px 14px;
+  border-radius: 8px;
   border: none;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
   white-space: nowrap;
+  color: var(--text2);
+  background: transparent;
+  transition: all 0.15s;
+  letter-spacing: 0.02em;
 }
-.nav-btn.active { color: var(--red); border-bottom-color: var(--red); }
+.nav-btn:active { opacity: 0.7; }
+.nav-btn.active {
+  background: rgba(229,57,53,0.15);
+  color: var(--red);
+}
 
 /* VIEWS */
 .view { display: none; padding: 14px 14px 80px; }
@@ -116,6 +119,26 @@ body { padding-top: 108px; }
 .metric-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
 .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em; line-height: 1.1; }
 .metric-sub { font-size: 11px; margin-top: 3px; color: var(--muted); }
+.metric-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--red);
+  opacity: 0.6;
+}
+.metric-value { font-size: 22px; font-weight: 700; color: var(--text); }
+.metric-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
 .up { color: var(--green); }
 .dn { color: var(--red); }
 
@@ -283,7 +306,7 @@ body { padding-top: 108px; }
 /* FORM */
 .form-row { margin-bottom: 11px; }
 .form-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 5px; display: block; font-weight: 600; }
-input[type=text], input[type=number], select, textarea {
+input[type=text], input[type=number], input[type=tel], input[type=password], .form-input, select, textarea {
   width: 100%;
   background: var(--bg3);
   border: 1px solid var(--border2);
@@ -330,6 +353,7 @@ textarea { resize: none; min-height: 72px; }
 }
 .btn:active { opacity: 0.7; }
 .btn-red { background: var(--red); color: #fff; }
+.btn-primary { background: var(--red); color: #fff; }
 .btn-gold { background: var(--gold); color: #0a0a0a; }
 .btn-ghost { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
 .btn-sm {
@@ -734,7 +758,7 @@ textarea { resize: none; min-height: 72px; }
     <button class="nav-btn" onclick="irPara('caixa',this)">Caixa</button>
     <button class="nav-btn" onclick="irPara('artes',this)">Artes</button>
     <button class="nav-btn" onclick="irPara('historico',this)">Histórico</button>
-    <button class="nav-btn" onclick="logout()" style="margin-left:auto;color:var(--muted)">Sair</button>
+    <button class="nav-btn" onclick="irPara('config',this)">Config</button>
   </div>
 </div>
 
@@ -1123,23 +1147,6 @@ textarea { resize: none; min-height: 72px; }
       <div class="section-body" id="rel-pagamentos"><div class="empty">Sem dados.</div></div>
     </div>
 
-    <div class="section" style="margin-top:14px">
-      <div class="section-head"><span class="section-title">Usuários do Sistema</span></div>
-      <div class="section-body">
-        <div id="usuarios-lista" style="margin-bottom:14px"></div>
-        <div style="border-top:1px solid var(--border);padding-top:14px">
-          <label class="form-label">Novo usuário</label>
-          <input class="form-input" id="novo-usuario-nome" placeholder="Nome de usuário" style="margin-bottom:8px">
-          <label class="form-label">Senha</label>
-          <input class="form-input" type="password" id="novo-usuario-senha" placeholder="Senha">
-          <button class="btn btn-primary" style="margin-top:10px;width:100%" onclick="adicionarUsuario()">+ Adicionar usuário</button>
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top:16px">
-      <button class="btn btn-ghost" onclick="confirmarZerarDia()">Fechar dia / zerar dados</button>
-    </div>
   </div>
 </div>
 
@@ -1254,6 +1261,73 @@ textarea { resize: none; min-height: 72px; }
       <div id="hist-lista"></div>
     </div>
   </div>
+</div>
+
+<!-- ===== CONFIGURAÇÕES ===== -->
+<div id="view-config" class="view">
+
+  <!-- Usuários -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Usuários</span>
+    </div>
+    <div class="section-body">
+      <div id="cfg-usuarios-lista" style="margin-bottom:14px"></div>
+      <div style="border-top:1px solid var(--border);padding-top:14px">
+        <label class="form-label">Novo usuário</label>
+        <input class="form-input" id="cfg-novo-nome" placeholder="Nome de usuário" style="margin-bottom:8px">
+        <label class="form-label">Senha</label>
+        <input class="form-input" type="password" id="cfg-nova-senha" placeholder="Senha">
+        <button class="btn btn-primary" style="margin-top:10px;width:100%" onclick="cfgAdicionarUsuario()">+ Adicionar usuário</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WhatsApp -->
+  <div class="section">
+    <div class="section-head"><span class="section-title">WhatsApp</span></div>
+    <div class="section-body">
+      <label class="form-label">Número para notificações</label>
+      <input class="form-input" id="cfg-wpp" type="tel" placeholder="Ex: 33984172773">
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-primary" style="flex:1" onclick="cfgSalvarWpp()">Salvar</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="cfgTestarWpp()">Testar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cardápio Digital -->
+  <div class="section">
+    <div class="section-head"><span class="section-title">Cardápio Digital</span></div>
+    <div class="section-body" id="cfg-cardapio-body">
+      <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;word-break:break-all;font-size:12px;color:var(--text2)" id="cfg-link-cardapio"></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="btn btn-primary" style="flex:1" onclick="cfgCopiarLink()">Copiar link</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="cfgAbrirCardapio()">Abrir</button>
+      </div>
+      <div style="text-align:center">
+        <img id="cfg-qr" style="width:140px;height:140px;border-radius:10px;background:#fff;padding:6px">
+      </div>
+    </div>
+  </div>
+
+  <!-- Sessão -->
+  <div class="section">
+    <div class="section-head"><span class="section-title">Sessão</span></div>
+    <div class="section-body">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Logado como: <strong id="cfg-usuario-atual" style="color:var(--text)"></strong></div>
+      <button class="btn btn-ghost" style="width:100%;color:var(--red);border-color:var(--red)" onclick="logout()">Sair do sistema</button>
+    </div>
+  </div>
+
+  <!-- Dados -->
+  <div class="section">
+    <div class="section-head"><span class="section-title">Dados</span></div>
+    <div class="section-body">
+      <button class="btn btn-ghost" style="width:100%" onclick="confirmarZerarDia()">Fechar dia / zerar dados</button>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast-wrap" id="toast-wrap"></div>
@@ -1470,9 +1544,10 @@ function irPara(id, btn) {
   if (id==='cozinha')   renderCozinha();
   if (id==='cardapio')  renderCardapio();
   if (id==='estoque')   renderEstoque();
-  if (id==='caixa')     { renderCaixa(); renderUsuarios(); }
+  if (id==='caixa')     { renderCaixa(); }
   if (id==='artes')     { renderArtes(); atualizarSbUI(); artesSync(); }
   if (id==='historico') renderHistorico();
+  if (id==='config') renderConfig();
 }
 
 function irSubtab(id, btn) {
@@ -2607,6 +2682,87 @@ function artesLimpar() {
   renderArtes();
   toast('Galeria limpa.', 'warn');
 }
+
+// ─── CONFIGURAÇÕES ────────────────────────────────────────────────────────────
+function renderConfig() {
+  // Usuários
+  var users = getUsuarios();
+  var atual = getUsuarioAtual();
+  var el = document.getElementById('cfg-usuarios-lista');
+  if (el) {
+    if (!users.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px">Nenhum usuário.</div>'; }
+    else el.innerHTML = users.map(function(u, i) {
+      var isAtual = atual && atual.nome === u.nome;
+      return '<div class="user-item">' +
+        '<div><div class="user-name">' + esc(u.nome) + (u.admin ? ' ⭐' : '') + '</div>' +
+        '<div class="user-role">' + (isAtual ? '● Online agora' : (u.admin ? 'Administrador' : 'Usuário')) + '</div></div>' +
+        (!isAtual && users.length > 1 ? '<button class="icon-btn" onclick="cfgRemoverUsuario('+i+')" style="color:var(--red);font-size:20px;padding:4px 8px">×</button>' : '') +
+      '</div>';
+    }).join('');
+  }
+  // WhatsApp
+  var wppEl = document.getElementById('cfg-wpp');
+  if (wppEl) wppEl.value = estado.whatsapp || '';
+  // Link cardápio
+  var url = urlCardapio();
+  var linkEl = document.getElementById('cfg-link-cardapio');
+  if (linkEl) linkEl.textContent = url;
+  var qrEl = document.getElementById('cfg-qr');
+  if (qrEl) qrEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url);
+  // Usuário atual
+  var uaEl = document.getElementById('cfg-usuario-atual');
+  if (uaEl && atual) uaEl.textContent = atual.nome;
+}
+
+function cfgAdicionarUsuario() {
+  var nome  = (document.getElementById('cfg-novo-nome').value || '').trim();
+  var senha = (document.getElementById('cfg-nova-senha').value || '').trim();
+  if (!nome || !senha) { toast('Preencha nome e senha.', 'err'); return; }
+  var users = getUsuarios();
+  if (users.some(function(u){ return u.nome === nome; })) { toast('Usuário já existe.', 'err'); return; }
+  users.push({ nome: nome, senha: btoa(senha), admin: false });
+  salvarUsuarios(users);
+  renderConfig();
+  document.getElementById('cfg-novo-nome').value = '';
+  document.getElementById('cfg-nova-senha').value = '';
+  toast('Usuário adicionado!', 'ok');
+}
+
+function cfgRemoverUsuario(idx) {
+  var users = getUsuarios();
+  if (!confirm('Remover usuário "' + users[idx].nome + '"?')) return;
+  users.splice(idx, 1);
+  salvarUsuarios(users);
+  renderConfig();
+  toast('Usuário removido.', 'warn');
+}
+
+function cfgSalvarWpp() {
+  var num = (document.getElementById('cfg-wpp').value || '').replace(/\D/g, '');
+  if (!num) { toast('Digite o número.', 'err'); return; }
+  estado.whatsapp = num;
+  salvar();
+  toast('Número salvo!', 'ok');
+}
+
+function cfgTestarWpp() {
+  var num = (document.getElementById('cfg-wpp').value || '').replace(/\D/g, '');
+  if (!num) { toast('Digite o número primeiro.', 'warn'); return; }
+  window.open('https://wa.me/55' + num + '?text=' + encodeURIComponent('Teste — Garage Gourmet ✅'), '_blank');
+}
+
+function cfgCopiarLink() {
+  var url = urlCardapio();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function(){ toast('Link copiado!', 'ok'); });
+  } else {
+    var el = document.createElement('textarea'); el.value = url;
+    document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el); toast('Link copiado!', 'ok');
+  }
+}
+
+function cfgAbrirCardapio() { window.open(urlCardapio(), '_blank'); }
 
 // ─── INIT ────────────────────────────────────────────────────────────────
 initUsuarios();
