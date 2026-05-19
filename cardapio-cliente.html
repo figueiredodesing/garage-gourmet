@@ -391,6 +391,30 @@ var KEY = 'gg_v2';
 var carrinho = [];
 var catAtiva = 'Todos';
 var pagSelecionado = '';
+
+// Cardápio padrão — usado quando o cliente abre em outro celular
+var CARDAPIO_PADRAO = [
+  {id:'c1',nome:'Clássico',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar e molho especial da casa.',preco:20,categoria:'Burgers',foto:'burger-classico.png',disponivel:true},
+  {id:'c2',nome:'Salada Burguer',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar, alface, tomate, picles e molho especial da casa.',preco:23,categoria:'Burgers',foto:'burger-salada.png',disponivel:true},
+  {id:'c3',nome:'Bacon Burguer',descricao:'Pão brioche, blend bovino 150g, queijo prato ou cheddar, bacon crocante, cheddar, cebola caramelizada e molho especial da casa.',preco:27,categoria:'Burgers',foto:'burger-bacon.png',disponivel:true},
+  {id:'c4',nome:'Especial Garage',descricao:'Pão brioche, blend bovino 150g, queijo prato, bacon crocante, banana da terra, cebola caramelizada, creme de cheddar e molho especial da casa.',preco:32,categoria:'Burgers',foto:'burger-especial.png',disponivel:true},
+  {id:'c5',nome:'Garage Duplo',descricao:'Pão brioche, duplo blend bovino 150g, duplo queijo cheddar, duplo bacon crocante e molho especial da casa.',preco:35,categoria:'Burgers',foto:'burger-duplo.png',disponivel:true},
+  {id:'c6',nome:'Garage Sertanejo',descricao:'Pão brioche, blend bovino 150g, queijo prato, banana da terra, carne seca desfiada, catupiry e molho especial da casa.',preco:33,categoria:'Burgers',foto:'burger-sertanejo.png',disponivel:true},
+  {id:'c7',nome:'Coca-Cola ou Guaraná 2L',descricao:'',preco:15,categoria:'Bebidas',disponivel:true},
+  {id:'c8',nome:'Coca-Cola Zero 2L',descricao:'',preco:16,categoria:'Bebidas',disponivel:true},
+  {id:'c9',nome:'Coca-Cola ou Guaraná 1L',descricao:'',preco:10,categoria:'Bebidas',disponivel:true},
+  {id:'c10',nome:'Coca-Cola ou Guaraná Lata',descricao:'',preco:6,categoria:'Bebidas',disponivel:true},
+  {id:'c11',nome:'Coca-Cola Lata Zero',descricao:'',preco:7,categoria:'Bebidas',disponivel:true},
+  {id:'c12',nome:'Blend Bovino 150g',descricao:'',preco:10,categoria:'Adicionais',disponivel:true},
+  {id:'c13',nome:'Bacon Crocante',descricao:'',preco:4,categoria:'Adicionais',disponivel:true},
+  {id:'c14',nome:'Picles',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:'c15',nome:'Ovo',descricao:'',preco:2,categoria:'Adicionais',disponivel:true},
+  {id:'c16',nome:'Cebola Caramelizada',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:'c17',nome:'Banana da Terra',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:'c18',nome:'Queijo',descricao:'',preco:3,categoria:'Adicionais',disponivel:true},
+  {id:'c19',nome:'Creme de Cheddar',descricao:'',preco:3,categoria:'Adicionais',disponivel:true}
+];
+
 var BURGER_FOTOS = {
   'Clássico':        'burger-classico.png',
   'Salada Burguer':  'burger-salada.png',
@@ -419,8 +443,8 @@ function lerEstado() {
 // ─── CARDÁPIO ───────────────────────────────────────────────────────────
 function cardapioDisponivel() {
   var d = lerEstado();
-  if (!d || !d.cardapio) return [];
-  return d.cardapio.filter(function(i){ return i.disponivel !== false; });
+  var lista = (d && d.cardapio && d.cardapio.length) ? d.cardapio : CARDAPIO_PADRAO;
+  return lista.filter(function(i){ return i.disponivel !== false; });
 }
 
 function categorias() {
@@ -581,8 +605,7 @@ function enviarPedido() {
     return;
   }
 
-  var d = lerEstado();
-  if (!d) { alert('Sistema indisponível. Fale com o atendente.'); return; }
+  var d = lerEstado() || { pedidos:[], pedidoNum:1, whatsapp:'3384413525' };
 
   var num = d.pedidoNum || 1;
   var pedido = {
