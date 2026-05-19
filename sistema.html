@@ -2494,25 +2494,28 @@ function sincronizarAgora() {
   });
 }
 
+function artesPushLista() {
+  var c = getSb();
+  return fetch(c.url + '/storage/v1/object/dados/artes.json', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + c.key, 'Content-Type': 'application/json', 'x-upsert': 'true' },
+    body: JSON.stringify(estado.artes)
+  });
+}
+
 function artesSync() {
-  if (!isSbAtivo()) { toast('Configure a nuvem primeiro.', 'err'); return; }
   var c = getSb();
   sbSetStatus('Sincronizando…', '');
-  fetch(c.url + '/storage/v1/object/list/artes', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + c.key, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ limit: 200, offset: 0, sortBy: { column: 'created_at', order: 'asc' } })
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(files) {
-    if (!Array.isArray(files)) throw new Error();
-    estado.artes = files.filter(function(f){ return f.name && f.name !== '.emptyFolderPlaceholder'; }).map(function(f) {
-      return { nome: f.name, src: c.url + '/storage/v1/object/public/artes/' + f.name, sbFile: f.name };
-    });
+  fetch(c.url + '/storage/v1/object/public/dados/artes.json?t=' + Date.now())
+  .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+  .then(function(artes) {
+    if (!Array.isArray(artes)) throw new Error();
+    estado.artes = artes;
     salvar(); renderArtes();
-    sbSetStatus('✅ ' + estado.artes.length + ' foto(s) sincronizada(s) — ' + new Date().toLocaleTimeString(), 'ok');
+    sbSetStatus('✅ ' + artes.length + ' foto(s) — ' + new Date().toLocaleTimeString(), 'ok');
+    if (artes.length > 0) toast(artes.length + ' arte(s) carregada(s)!', 'ok');
   })
-  .catch(function() { sbSetStatus('❌ Erro. Verifique a URL e a chave.', 'err'); });
+  .catch(function() { sbSetStatus('Sem fotos na nuvem ainda.', ''); });
 }
 
 // ─── ARTES BACKUP (exportar / importar) ─────────────────────────────────────
@@ -2562,7 +2565,8 @@ function artesFromFiles(input) {
           sbSetStatus('✅ ' + files.length + ' foto(s) salva(s) na nuvem — ' + new Date().toLocaleTimeString(), 'ok');
           toast('Foto(s) salvas na nuvem!', 'ok');
         }
-      }).catch(function() { toast('Erro ao enviar ' + file.name, 'err'); });
+      }).then(function() { artesPushLista(); })
+        .catch(function() { toast('Erro ao enviar ' + file.name, 'err'); });
     });
   } else {
     var done = 0;
@@ -2587,6 +2591,7 @@ function arteDel(idx) {
   if (isSbAtivo() && arte && arte.sbFile) sbRemove(arte.sbFile).catch(function(){});
   estado.artes.splice(idx, 1);
   salvar(); renderArtes();
+  artesPushLista().catch(function(){});
   toast('Foto removida.', 'warn');
 }
 
