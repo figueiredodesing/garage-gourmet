@@ -726,15 +726,21 @@ textarea { resize: none; min-height: 72px; }
   background: linear-gradient(90deg, transparent, rgba(229,57,53,0.6), transparent);
 }
 .login-logo-wrap {
-  width: 130px; height: 130px;
+  width: 140px; height: 140px;
   border-radius: 50%;
-  background: #000;
+  background: transparent;
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 20px;
-  overflow: hidden;
-  box-shadow: 0 0 0 1px #222, 0 0 30px rgba(229,57,53,0.15);
+  margin-bottom: 16px;
+  position: relative;
 }
-.login-logo { width: 130px; height: 130px; object-fit: cover; mix-blend-mode: screen; }
+.login-logo-wrap::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #1e1e1e, 0 0 28px rgba(229,57,53,0.12);
+  pointer-events: none;
+}
+.login-logo { width: 140px; height: 140px; object-fit: cover; filter: url('#rmwhite'); }
 .login-title { display: none; }
 .login-sub { font-size: 10px; color: #3a3a3a; margin-bottom: 24px; letter-spacing: 0.14em; text-transform: uppercase; }
 .login-field { width: 100%; margin-bottom: 9px; }
