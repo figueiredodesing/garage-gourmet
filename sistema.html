@@ -489,26 +489,31 @@ textarea { resize: none; min-height: 72px; }
   overflow: hidden;
   background: var(--bg3);
   border: 1px solid var(--border);
-  aspect-ratio: 1;
 }
 .arte-card img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
+  object-fit: contain;
 }
-.arte-del {
+.arte-actions {
+  display: flex;
+  gap: 6px;
   position: absolute;
   top: 6px; right: 6px;
-  width: 26px; height: 26px;
-  background: rgba(0,0,0,0.7);
+}
+.arte-del, .arte-dl {
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.75);
   border: none;
   border-radius: 50%;
   color: #fff;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   line-height: 1;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 .arte-add-card {
   border-radius: var(--radius);
@@ -1863,9 +1868,13 @@ function renderArtes() {
   count.textContent = artes.length + (artes.length === 1 ? ' foto' : ' fotos');
   var html = '';
   artes.forEach(function(a, i) {
+    var nome = a.nome || ('arte-' + (i+1) + '.png');
     html += '<div class="arte-card">' +
       '<img src="' + esc(a.src) + '" alt="Arte ' + (i+1) + '" loading="lazy">' +
-      '<button class="arte-del" onclick="arteDel(' + i + ')" title="Remover">×</button>' +
+      '<div class="arte-actions">' +
+        '<a class="arte-dl" href="' + esc(a.src) + '" download="' + esc(nome) + '" title="Baixar">⬇</a>' +
+        '<button class="arte-del" onclick="arteDel(' + i + ')" title="Remover">×</button>' +
+      '</div>' +
     '</div>';
   });
   html += '<div class="arte-add-card" onclick="document.getElementById(\'artes-file-input\').click()">' +
