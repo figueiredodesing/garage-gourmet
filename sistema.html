@@ -517,6 +517,42 @@ textarea { resize: none; min-height: 72px; }
   flex-shrink: 0;
   backdrop-filter: blur(4px);
 }
+/* SYNC PANEL */
+.sync-panel { display: flex; flex-direction: column; gap: 10px; }
+.sync-row {
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.sync-row-icon { font-size: 22px; flex-shrink: 0; }
+.sync-row-info { flex: 1; min-width: 0; }
+.sync-row-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.sync-row-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.sync-row-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.sync-btn {
+  padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+}
+.sync-btn:active { opacity: 0.75; }
+.sync-btn.primary { background: var(--red); border-color: var(--red); color: #fff; }
+.cloud-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; padding: 3px 8px;
+  border-radius: 20px; margin-left: 6px;
+}
+.cloud-badge.ativo { background: rgba(46,204,113,0.15); color: var(--green); }
+.cloud-badge.inativo { background: var(--bg4); color: var(--muted); }
+.sb-setup {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; margin-top: 4px;
+}
+.sb-steps { font-size: 12px; color: var(--text2); line-height: 1.7; margin-bottom: 12px; padding-left: 16px; }
+.sb-steps li { margin-bottom: 2px; }
+.sb-status { font-size: 12px; margin-top: 8px; text-align: center; min-height: 18px; }
+
 .arte-add-card {
   border-radius: var(--radius);
   border: 2px dashed var(--border2);
@@ -1006,14 +1042,66 @@ textarea { resize: none; min-height: 72px; }
   <input type="file" id="artes-import-input" accept=".json" style="display:none" onchange="artesImportar(this)">
   <button class="btn btn-gold" onclick="document.getElementById('artes-file-input').click()">+ Adicionar foto</button>
 
-  <!-- Salvar / Carregar -->
   <div class="section" style="margin-top:14px">
-    <div class="section-head"><span class="section-title" style="font-size:14px">💾 Salvar e carregar fotos</span></div>
+    <div class="section-head">
+      <span class="section-title" style="font-size:14px">Backup & Sincronização</span>
+    </div>
     <div class="section-body">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Salve todas as fotos num arquivo para não perder, e carregue quando quiser em qualquer dispositivo.</p>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-primary" style="flex:1" onclick="artesExportar()">⬇ Salvar fotos</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="document.getElementById('artes-import-input').click()">⬆ Carregar fotos</button>
+      <div class="sync-panel">
+
+        <!-- Backup local -->
+        <div class="sync-row">
+          <div class="sync-row-icon">💾</div>
+          <div class="sync-row-info">
+            <div class="sync-row-title">Backup local</div>
+            <div class="sync-row-desc">Salva todas as fotos num arquivo. Carregue em qualquer dispositivo quando quiser.</div>
+          </div>
+          <div class="sync-row-btns">
+            <button class="sync-btn" onclick="artesExportar()" title="Salvar arquivo">⬇</button>
+            <button class="sync-btn" onclick="document.getElementById('artes-import-input').click()" title="Carregar arquivo">⬆</button>
+          </div>
+        </div>
+
+        <!-- Nuvem -->
+        <div class="sync-row" style="flex-direction:column;align-items:stretch;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="sync-row-icon">☁️</div>
+            <div class="sync-row-info">
+              <div class="sync-row-title">
+                Sincronização em nuvem
+                <span id="sb-badge" class="cloud-badge inativo">● Inativo</span>
+              </div>
+              <div class="sync-row-desc">Adicione no PC e aparece no celular automaticamente. Grátis via Supabase.</div>
+            </div>
+            <button class="sync-btn" onclick="toggleSbSetup()">⚙</button>
+          </div>
+
+          <!-- Setup panel (oculto por padrão) -->
+          <div class="sb-setup" id="sb-setup" style="display:none">
+            <ol class="sb-steps">
+              <li>Acesse <strong>supabase.com</strong> → crie uma conta grátis</li>
+              <li>Crie um projeto → vá em <strong>Storage</strong> → <strong>New bucket</strong></li>
+              <li>Nome do bucket: <strong>artes</strong> → marque <strong>Public bucket</strong></li>
+              <li>Vá em <strong>Project Settings → API</strong> e copie a URL e a <em>anon key</em></li>
+            </ol>
+            <label class="form-label">URL do projeto</label>
+            <input class="form-input" id="sb-url" placeholder="https://xxxx.supabase.co" style="font-size:12px;margin-bottom:8px">
+            <label class="form-label">Chave anon (anon key)</label>
+            <input class="form-input" id="sb-key" type="password" placeholder="eyJhbGciOi..." style="font-size:12px">
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="sync-btn primary" style="flex:1" onclick="salvarSbConfig()">✓ Ativar sincronização</button>
+              <button class="sync-btn" style="flex:1" onclick="artesSync()">🔄 Sincronizar agora</button>
+            </div>
+            <div class="sb-status" id="sb-status"></div>
+          </div>
+
+          <!-- Sync rápido quando ativo -->
+          <div id="sb-sync-bar" style="display:none">
+            <button class="sync-btn" style="width:100%;justify-content:center" onclick="artesSync()">🔄 Buscar fotos da nuvem</button>
+            <div class="sb-status" id="sb-status2"></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1152,7 +1240,7 @@ function irPara(id, btn) {
   if (id==='cardapio')  renderCardapio();
   if (id==='estoque')   renderEstoque();
   if (id==='caixa')     renderCaixa();
-  if (id==='artes')     renderArtes();
+  if (id==='artes')     { renderArtes(); atualizarSbUI(); }
 }
 
 function irSubtab(id, btn) {
@@ -1899,19 +1987,111 @@ function renderArtes() {
   grid.innerHTML = html;
 }
 
-// ─── ARTES EXPORTAR / IMPORTAR ──────────────────────────────────────────────
+// ─── SUPABASE SYNC ───────────────────────────────────────────────────────────
+var SB_CFG_KEY = 'gg_sb_cfg';
+
+function getSb() {
+  try { return JSON.parse(localStorage.getItem(SB_CFG_KEY)) || {}; } catch(e) { return {}; }
+}
+function isSbAtivo() { var c = getSb(); return !!(c.url && c.key); }
+
+function atualizarSbUI() {
+  var ativo = isSbAtivo();
+  var badge = document.getElementById('sb-badge');
+  var bar   = document.getElementById('sb-sync-bar');
+  if (badge) {
+    badge.textContent = ativo ? '● Ativo' : '● Inativo';
+    badge.className = 'cloud-badge ' + (ativo ? 'ativo' : 'inativo');
+  }
+  if (bar) bar.style.display = ativo ? 'block' : 'none';
+}
+
+function toggleSbSetup() {
+  var el = document.getElementById('sb-setup');
+  if (!el) return;
+  var open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  if (!open) {
+    var c = getSb();
+    var u = document.getElementById('sb-url'); if (u && c.url) u.value = c.url;
+    var k = document.getElementById('sb-key'); if (k && c.key) k.value = c.key;
+  }
+}
+
+function salvarSbConfig() {
+  var url = (document.getElementById('sb-url').value || '').trim().replace(/\/$/, '');
+  var key = (document.getElementById('sb-key').value || '').trim();
+  if (!url || !key) { toast('Preencha URL e chave.', 'err'); return; }
+  localStorage.setItem(SB_CFG_KEY, JSON.stringify({ url: url, key: key }));
+  atualizarSbUI();
+  toast('Sincronização ativada!', 'ok');
+  document.getElementById('sb-setup').style.display = 'none';
+  artesSync();
+}
+
+function sbSetStatus(msg, tipo) {
+  ['sb-status','sb-status2'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = tipo === 'ok' ? 'var(--green)' : tipo === 'err' ? 'var(--red)' : 'var(--muted)';
+  });
+}
+
+function sbUpload(file) {
+  var c = getSb();
+  var fname = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  return fetch(c.url + '/storage/v1/object/artes/' + fname, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + c.key, 'Content-Type': file.type || 'image/png' },
+    body: file
+  }).then(function(r) {
+    if (!r.ok) throw new Error('Upload falhou');
+    return { sbFile: fname, src: c.url + '/storage/v1/object/public/artes/' + fname };
+  });
+}
+
+function sbRemove(sbFile) {
+  var c = getSb();
+  return fetch(c.url + '/storage/v1/object/artes', {
+    method: 'DELETE',
+    headers: { 'Authorization': 'Bearer ' + c.key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prefixes: [sbFile] })
+  });
+}
+
+function artesSync() {
+  if (!isSbAtivo()) { toast('Configure a nuvem primeiro.', 'err'); return; }
+  var c = getSb();
+  sbSetStatus('Sincronizando…', '');
+  fetch(c.url + '/storage/v1/object/list/artes', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + c.key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ limit: 200, offset: 0, sortBy: { column: 'created_at', order: 'asc' } })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(files) {
+    if (!Array.isArray(files)) throw new Error();
+    estado.artes = files.filter(function(f){ return f.name && f.name !== '.emptyFolderPlaceholder'; }).map(function(f) {
+      return { nome: f.name, src: c.url + '/storage/v1/object/public/artes/' + f.name, sbFile: f.name };
+    });
+    salvar(); renderArtes();
+    sbSetStatus('✅ ' + estado.artes.length + ' foto(s) sincronizada(s) — ' + new Date().toLocaleTimeString(), 'ok');
+  })
+  .catch(function() { sbSetStatus('❌ Erro. Verifique a URL e a chave.', 'err'); });
+}
+
+// ─── ARTES BACKUP (exportar / importar) ─────────────────────────────────────
 function artesExportar() {
   if (!estado.artes.length) { toast('Nenhuma foto para salvar.', 'err'); return; }
-  var json = JSON.stringify(estado.artes);
-  var blob = new Blob([json], { type: 'application/json' });
+  var blob = new Blob([JSON.stringify(estado.artes)], { type: 'application/json' });
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  var data = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
   a.href = url;
-  a.download = 'garage-artes-' + data + '.json';
+  a.download = 'garage-artes-' + new Date().toLocaleDateString('pt-BR').replace(/\//g,'-') + '.json';
   a.click();
   URL.revokeObjectURL(url);
-  toast('Fotos salvas no arquivo!', 'ok');
+  toast('Backup salvo!', 'ok');
 }
 
 function artesImportar(input) {
@@ -1922,43 +2102,57 @@ function artesImportar(input) {
     try {
       var data = JSON.parse(e.target.result);
       if (!Array.isArray(data)) throw new Error();
-      if (!confirm('Isso vai substituir as ' + estado.artes.length + ' fotos atuais por ' + data.length + ' do arquivo. Continuar?')) return;
-      estado.artes = data;
-      salvar();
-      renderArtes();
+      if (!confirm('Substituir as ' + estado.artes.length + ' foto(s) atual(is) por ' + data.length + ' do arquivo?')) return;
+      estado.artes = data; salvar(); renderArtes();
       toast(data.length + ' foto(s) carregadas!', 'ok');
-    } catch(err) {
-      toast('Arquivo inválido.', 'err');
-    }
+    } catch(e) { toast('Arquivo inválido.', 'err'); }
   };
   reader.readAsText(file);
   input.value = '';
 }
 
+// ─── ARTES ADICIONAR / REMOVER ───────────────────────────────────────────────
 function artesFromFiles(input) {
   var files = Array.prototype.slice.call(input.files);
   if (!files.length) return;
-  var done = 0;
-  files.forEach(function(file) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      estado.artes.push({ src: e.target.result, nome: file.name });
-      done++;
-      if (done === files.length) {
-        salvar();
-        renderArtes();
-        toast('Foto' + (files.length > 1 ? 's adicionadas' : ' adicionada') + '!', 'ok');
-      }
-    };
-    reader.readAsDataURL(file);
-  });
+
+  if (isSbAtivo()) {
+    toast('Enviando foto(s)…', 'ok');
+    var done = 0;
+    files.forEach(function(file) {
+      sbUpload(file).then(function(res) {
+        estado.artes.push({ src: res.src, nome: file.name, sbFile: res.sbFile });
+        done++;
+        if (done === files.length) {
+          salvar(); renderArtes();
+          sbSetStatus('✅ ' + files.length + ' foto(s) salva(s) na nuvem — ' + new Date().toLocaleTimeString(), 'ok');
+          toast('Foto(s) salvas na nuvem!', 'ok');
+        }
+      }).catch(function() { toast('Erro ao enviar ' + file.name, 'err'); });
+    });
+  } else {
+    var done = 0;
+    files.forEach(function(file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        estado.artes.push({ src: e.target.result, nome: file.name });
+        done++;
+        if (done === files.length) {
+          salvar(); renderArtes();
+          toast('Foto' + (files.length > 1 ? 's adicionadas' : ' adicionada') + '!', 'ok');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
   input.value = '';
 }
 
 function arteDel(idx) {
+  var arte = estado.artes[idx];
+  if (isSbAtivo() && arte && arte.sbFile) sbRemove(arte.sbFile).catch(function(){});
   estado.artes.splice(idx, 1);
-  salvar();
-  renderArtes();
+  salvar(); renderArtes();
   toast('Foto removida.', 'warn');
 }
 
