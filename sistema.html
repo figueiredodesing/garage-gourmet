@@ -649,33 +649,34 @@ textarea { resize: none; min-height: 72px; }
 #login-screen {
   position: fixed; inset: 0; background: #000;
   display: flex; align-items: center; justify-content: center;
-  z-index: 9999; flex-direction: column;
+  z-index: 9999;
 }
 .login-card {
-  background: #000; border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 340px;
+  background: transparent;
+  padding: 0 28px; width: 100%; max-width: 320px;
   display: flex; flex-direction: column; align-items: center;
 }
-.login-logo { height: 90px; margin-bottom: 24px; }
-.login-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.12em; color: #fff; margin-bottom: 4px; }
-.login-sub { font-size: 12px; color: #555; margin-bottom: 26px; }
-.login-field { width: 100%; margin-bottom: 12px; }
+.login-logo { width: 160px; height: auto; margin-bottom: 28px; }
+.login-title { display: none; }
+.login-sub { font-size: 12px; color: #444; margin-bottom: 28px; letter-spacing: 0.05em; }
+.login-field { width: 100%; margin-bottom: 10px; }
 .login-field input {
   width: 100%; background: #111; border: 1px solid #222;
-  border-radius: var(--radius-sm); padding: 12px 14px; color: #fff;
+  border-radius: 10px; padding: 13px 16px; color: #fff;
   font-size: 14px; outline: none; box-sizing: border-box;
+  -webkit-appearance: none;
 }
-.login-field input:focus { border-color: #444; }
+.login-field input:focus { border-color: #555; }
 .login-field input::placeholder { color: #444; }
 .login-btn {
-  width: 100%; background: #111; border: 1px solid #333;
-  border-radius: var(--radius-sm); color: #fff; font-size: 15px;
-  font-weight: 700; padding: 13px; cursor: pointer; margin-top: 4px;
-  letter-spacing: 0.06em;
+  width: 100%; background: #111; border: 1px solid #2a2a2a;
+  border-radius: 10px; color: #fff; font-size: 14px;
+  font-weight: 700; padding: 14px; cursor: pointer; margin-top: 6px;
+  letter-spacing: 0.1em;
 }
-.login-btn:active { background: #222; }
+.login-btn:active { background: #1a1a1a; }
 .login-error { color: #e53935; font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; }
-.login-version { font-size: 11px; color: #333; margin-top: 20px; }
+.login-version { font-size: 11px; color: #2a2a2a; margin-top: 24px; }
 
 /* USUÁRIOS */
 .user-item {
@@ -692,7 +693,7 @@ textarea { resize: none; min-height: 72px; }
 <!-- TELA DE LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet" style="filter:url('#rmwhite');height:80px;margin-bottom:8px">
+    <img class="login-logo" src="Garage_Gourmet_centered.png" alt="Garage Gourmet">
     <div class="login-title">Garage Gourmet</div>
     <div class="login-sub">Faça login para continuar</div>
     <div class="login-field">
