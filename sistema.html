@@ -1315,7 +1315,7 @@ function irPara(id, btn) {
   if (id==='cardapio')  renderCardapio();
   if (id==='estoque')   renderEstoque();
   if (id==='caixa')     renderCaixa();
-  if (id==='artes')     { renderArtes(); atualizarSbUI(); }
+  if (id==='artes')     { renderArtes(); atualizarSbUI(); artesSync(); }
   if (id==='historico') renderHistorico();
 }
 
@@ -2450,7 +2450,8 @@ function artesLimpar() {
 carregar();
 setTimeout(function() {
   sbPullEstado(function(ok) { if (ok) renderDashboard(); });
-}, 500);
+  artesSync();
+}, 800);
 atualizarData();
 onPagChange();
 renderDashboard();
