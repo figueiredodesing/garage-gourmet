@@ -1622,14 +1622,17 @@ function carregarDemoData() {
   estado.cardapio  = DEFAULTS_CARDAPIO;
   estado.whatsapp  = '3384413525';
   estado.pedidoNum = 19;
-  estado.pedidos   = [
-    {num:13,itens:[{nome:'Especial Garage',preco:32,qtd:2},{nome:'Coca-Cola ou Guaraná 2L',preco:15,qtd:1}],valor:79,status:'entregue',pag:'pix',mesa:'',obs:'',ts:now-7200000},
-    {num:14,itens:[{nome:'Garage Duplo',preco:35,qtd:1},{nome:'Bacon Burguer',preco:27,qtd:1},{nome:'Coca-Cola Lata Zero',preco:7,qtd:2}],valor:76,status:'entregue',pag:'cartao',mesa:'',obs:'',ts:now-6000000},
-    {num:15,itens:[{nome:'Clássico',preco:20,qtd:2},{nome:'Coca-Cola ou Guaraná Lata',preco:6,qtd:2}],valor:52,status:'entregue',pag:'dinheiro',mesa:'',obs:'Sem cebola',ts:now-4800000},
-    {num:16,itens:[{nome:'Garage Sertanejo',preco:33,qtd:1},{nome:'Salada Burguer',preco:23,qtd:1},{nome:'Coca-Cola ou Guaraná 1L',preco:10,qtd:1}],valor:66,status:'entregue',pag:'pix',mesa:'',obs:'',ts:now-3600000},
-    {num:17,itens:[{nome:'Bacon Burguer',preco:27,qtd:2},{nome:'Coca-Cola ou Guaraná 2L',preco:15,qtd:1}],valor:69,status:'entregue',pag:'cartao',mesa:'',obs:'Um com bacon extra',ts:now-2400000},
-    {num:18,itens:[{nome:'Especial Garage',preco:32,qtd:1},{nome:'Garage Duplo',preco:35,qtd:1},{nome:'Coca-Cola Lata Zero',preco:7,qtd:2}],valor:81,status:'pronto',pag:'pix',mesa:'',obs:'',ts:now-900000},
-    {num:19,itens:[{nome:'Clássico',preco:20,qtd:1},{nome:'Salada Burguer',preco:23,qtd:1}],valor:43,status:'preparo',pag:'dinheiro',mesa:'',obs:'Sem tomate no Clássico',ts:now-300000}
+  function demoHora(msAtras) {
+    return new Date(now - msAtras).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }
+  estado.pedidos = [
+    {num:13,itens:[{nome:'Especial Garage',preco:32,qtd:2},{nome:'Coca-Cola ou Guaraná 2L',preco:15,qtd:1}],valor:79,status:'entregue',pag:'pix',mesa:'',obs:'',hora:demoHora(7200000),ts:now-7200000},
+    {num:14,itens:[{nome:'Garage Duplo',preco:35,qtd:1},{nome:'Bacon Burguer',preco:27,qtd:1},{nome:'Coca-Cola Lata Zero',preco:7,qtd:2}],valor:76,status:'entregue',pag:'cartao',mesa:'',obs:'',hora:demoHora(6000000),ts:now-6000000},
+    {num:15,itens:[{nome:'Clássico',preco:20,qtd:2},{nome:'Coca-Cola ou Guaraná Lata',preco:6,qtd:2}],valor:52,status:'entregue',pag:'dinheiro',mesa:'',obs:'Sem cebola',hora:demoHora(4800000),ts:now-4800000},
+    {num:16,itens:[{nome:'Garage Sertanejo',preco:33,qtd:1},{nome:'Salada Burguer',preco:23,qtd:1},{nome:'Coca-Cola ou Guaraná 1L',preco:10,qtd:1}],valor:66,status:'entregue',pag:'pix',mesa:'',obs:'',hora:demoHora(3600000),ts:now-3600000},
+    {num:17,itens:[{nome:'Bacon Burguer',preco:27,qtd:2},{nome:'Coca-Cola ou Guaraná 2L',preco:15,qtd:1}],valor:69,status:'entregue',pag:'cartao',mesa:'',obs:'Um com bacon extra',hora:demoHora(2400000),ts:now-2400000},
+    {num:18,itens:[{nome:'Especial Garage',preco:32,qtd:1},{nome:'Garage Duplo',preco:35,qtd:1},{nome:'Coca-Cola Lata Zero',preco:7,qtd:2}],valor:81,status:'pronto',pag:'pix',mesa:'',obs:'',hora:demoHora(900000),ts:now-900000},
+    {num:19,itens:[{nome:'Clássico',preco:20,qtd:1},{nome:'Salada Burguer',preco:23,qtd:1}],valor:43,status:'preparo',pag:'dinheiro',mesa:'',obs:'Sem tomate no Clássico',hora:demoHora(300000),ts:now-300000}
   ];
   estado.custos = [
     {descricao:'Pão brioche (50 un)',valor:45,ts:now-10800000},
