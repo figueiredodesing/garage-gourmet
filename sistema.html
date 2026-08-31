@@ -1616,8 +1616,64 @@ var DEFAULTS_CARDAPIO = [
   {id:uid(),nome:'Creme de Cheddar',descricao:'',preco:3,categoria:'Adicionais',disponivel:true}
 ];
 
+function carregarDemoData() {
+  var now = Date.now();
+  var hoje = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  estado.cardapio  = DEFAULTS_CARDAPIO;
+  estado.whatsapp  = '3384413525';
+  estado.pedidoNum = 19;
+  estado.pedidos   = [
+    {num:13,itens:[{nome:'Especial Garage',preco:32,qtd:2},{nome:'Coca-Cola ou Guaraná 2L',preco:15,qtd:1}],valor:79,status:'entregue',pag:'pix',mesa:'',obs:'',ts:now-7200000},
+    {num:14,itens:[{nome:'Garage Duplo',preco:35,qtd:1},{nome:'Bacon Burguer',preco:27,qtd:1},{nome:'Coca-Cola Lata Zero',preco:7,qtd:2}],valor:76,status:'entregue',pag:'cartao',mesa:'',obs:'',ts:now-6000000},
+    {num:15,itens:[{nome:'Clássico',preco:20,qtd:2},{nome:'Coca-Cola ou Guaraná Lata',preco:6,qtd:2}],valor:52,status:'entregue',pag:'dinheiro',mesa:'',obs:'Sem cebola',ts:now-4800000},
+    {num:16,itens:[{nome:'Garage Sertanejo',preco:33,qtd:1},{nome:'Salada Burguer',preco:23,qtd:1},{nome:'Coca-Cola ou Guaraná 1L',preco:10,qtd:1}],valor:66,status:'entregue',pag:'pix',mesa:'',obs:'',ts:now-3600000},
+    {num:17,itens:[{nome:'Bacon Burguer',preco:27,qtd:2},{nome:'Coca-Cola ou Guaraná 2L',preco:15,qtd:1}],valor:69,status:'entregue',pag:'cartao',mesa:'',obs:'Um com bacon extra',ts:now-2400000},
+    {num:18,itens:[{nome:'Especial Garage',preco:32,qtd:1},{nome:'Garage Duplo',preco:35,qtd:1},{nome:'Coca-Cola Lata Zero',preco:7,qtd:2}],valor:81,status:'pronto',pag:'pix',mesa:'',obs:'',ts:now-900000},
+    {num:19,itens:[{nome:'Clássico',preco:20,qtd:1},{nome:'Salada Burguer',preco:23,qtd:1}],valor:43,status:'preparo',pag:'dinheiro',mesa:'',obs:'Sem tomate no Clássico',ts:now-300000}
+  ];
+  estado.custos = [
+    {descricao:'Pão brioche (50 un)',valor:45,ts:now-10800000},
+    {descricao:'Blend bovino (3kg)',valor:90,ts:now-10800000},
+    {descricao:'Embalagens',valor:18,ts:now-10800000}
+  ];
+  estado.estoque = [
+    {nome:'Pão Brioche',qtd:23,minimo:10,unidade:'un'},
+    {nome:'Blend Bovino 150g',qtd:18,minimo:8,unidade:'un'},
+    {nome:'Queijo Cheddar',qtd:40,minimo:15,unidade:'fatias'},
+    {nome:'Bacon Crocante',qtd:30,minimo:10,unidade:'pct'},
+    {nome:'Cebola Caramelizada',qtd:12,minimo:5,unidade:'pç'},
+    {nome:'Coca-Cola 2L',qtd:8,minimo:5,unidade:'un'},
+    {nome:'Coca-Cola Lata',qtd:24,minimo:12,unidade:'un'},
+    {nome:'Catupiry',qtd:3,minimo:2,unidade:'un'},
+    {nome:'Carne Seca',qtd:1,minimo:2,unidade:'kg'}
+  ];
+  var dias = ['Ter','Qua','Qui','Sex','Sáb','Dom','Seg'];
+  estado.historico = dias.map(function(d, i) {
+    var fat = [312, 498, 276, 683, 924, 1047, 466][i];
+    var nped = [9,14,8,19,27,31,13][i];
+    return {
+      data: d + ', ' + (24+i) + '/08/2026',
+      faturamento: fat,
+      pedidos: nped,
+      ticketMedio: Math.round(fat/nped*100)/100,
+      saldo: fat - [95,120,88,145,180,210,110][i],
+      pagamentos: {dinheiro: Math.round(fat*0.3), pix: Math.round(fat*0.45), cartao: Math.round(fat*0.25)},
+      topItens: [
+        {nome:'Especial Garage',qtd:Math.round(nped*0.3)},
+        {nome:'Garage Duplo',qtd:Math.round(nped*0.22)},
+        {nome:'Bacon Burguer',qtd:Math.round(nped*0.18)}
+      ]
+    };
+  });
+}
+
 function carregar() {
+  var isDemo = window.location.search.indexOf('demo') !== -1;
   try {
+    if (isDemo) {
+      carregarDemoData();
+      return;
+    }
     var s = localStorage.getItem(KEY);
     if (s) {
       var d = JSON.parse(s);
@@ -1631,7 +1687,6 @@ function carregar() {
       estado.pedidoNum = d.pedidoNum || 1;
       var temAntigo = estado.cardapio.some(function(i){ return i.categoria === 'Lanches' || i.categoria === 'Acompanhamentos' || i.categoria === 'Sobremesas'; });
       if (!estado.cardapio.length || temAntigo) { estado.cardapio = DEFAULTS_CARDAPIO; salvar(); }
-      // adiciona foto nos burgers que ainda não têm
       var foiAtualizado = false;
       estado.cardapio.forEach(function(i){ if (!i.foto && BURGER_FOTOS[i.nome]) { i.foto = BURGER_FOTOS[i.nome]; foiAtualizado = true; } });
       if (foiAtualizado) salvar();
@@ -2885,14 +2940,23 @@ function cfgAbrirCardapio() { window.open(urlCardapio(), '_blank'); }
 // ─── INIT ────────────────────────────────────────────────────────────────
 initUsuarios();
 carregar();
-if (!isLoggedIn()) {
+// Modo demo: pula login e mostra banner
+if (window.location.search.indexOf('demo') !== -1) {
+  document.getElementById('login-screen').style.display = 'none';
+  var demoBanner = document.createElement('div');
+  demoBanner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:8888;background:rgba(229,57,53,0.92);color:#fff;font-size:11px;font-weight:700;text-align:center;padding:7px;letter-spacing:0.1em;text-transform:uppercase;backdrop-filter:blur(4px)';
+  demoBanner.textContent = '⚡ Modo Demo — Dados fictícios para portfolio';
+  document.body.appendChild(demoBanner);
+} else if (!isLoggedIn()) {
   // login screen already visible
 } else {
   document.getElementById('login-screen').style.display = 'none';
 }
 setTimeout(function() {
-  sbPullEstado(function(ok) { if (ok) renderDashboard(); });
-  artesSync();
+  if (window.location.search.indexOf('demo') === -1) {
+    sbPullEstado(function(ok) { if (ok) renderDashboard(); });
+    artesSync();
+  }
 }, 800);
 atualizarData();
 onPagChange();
