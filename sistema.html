@@ -1650,21 +1650,29 @@ function carregarDemoData() {
     {nome:'Catupiry',qtd:3,minimo:2,unidade:'un'},
     {nome:'Carne Seca',qtd:1,minimo:2,unidade:'kg'}
   ];
-  var dias = ['Ter','Qua','Qui','Sex','Sáb','Dom','Seg'];
-  estado.historico = dias.map(function(d, i) {
-    var fat = [312, 498, 276, 683, 924, 1047, 466][i];
-    var nped = [9,14,8,19,27,31,13][i];
+  var diasSemana = ['Terça','Quarta','Quinta','Sexta','Sábado','Domingo','Segunda'];
+  var diasNum    = [25,26,27,28,29,30,31];
+  var fats       = [312, 498, 276, 683, 924, 1047, 466];
+  var npeds      = [9,14,8,19,27,31,13];
+  var saidas_arr = [95,120,88,145,180,210,110];
+  estado.historico = diasSemana.map(function(ds, i) {
+    var fat  = fats[i];
+    var np   = npeds[i];
+    var sai  = saidas_arr[i];
+    var dia  = diasNum[i];
     return {
-      data: d + ', ' + (24+i) + '/08/2026',
+      diaSemana:   ds,
+      dataFmt:     (dia < 10 ? '0'+dia : dia) + '/08/2026',
+      data:        '2026-08-' + (dia < 10 ? '0'+dia : dia),
       faturamento: fat,
-      pedidos: nped,
-      ticketMedio: Math.round(fat/nped*100)/100,
-      saldo: fat - [95,120,88,145,180,210,110][i],
-      pagamentos: {dinheiro: Math.round(fat*0.3), pix: Math.round(fat*0.45), cartao: Math.round(fat*0.25)},
+      numPedidos:  np,
+      ticketMedio: Math.round(fat/np*100)/100,
+      saldo:       fat - sai,
+      saidas:      sai,
       topItens: [
-        {nome:'Especial Garage',qtd:Math.round(nped*0.3)},
-        {nome:'Garage Duplo',qtd:Math.round(nped*0.22)},
-        {nome:'Bacon Burguer',qtd:Math.round(nped*0.18)}
+        {nome:'Especial Garage', qtd:Math.round(np*0.3),  total:Math.round(np*0.3)*32},
+        {nome:'Garage Duplo',    qtd:Math.round(np*0.22), total:Math.round(np*0.22)*35},
+        {nome:'Bacon Burguer',   qtd:Math.round(np*0.18), total:Math.round(np*0.18)*27}
       ]
     };
   });
